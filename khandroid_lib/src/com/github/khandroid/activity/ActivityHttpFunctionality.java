@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2012-2013 Ognyan Bankov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.github.khandroid.activity;
 
 
@@ -16,9 +33,9 @@ import android.net.NetworkInfo;
 
 
 abstract public class ActivityHttpFunctionality extends ActivityUniqueAttachedFunctionality implements HttpFunctionality {
-	private DefaultHttpClient httpClient;
-	private boolean isShutdown = false;
-	private boolean autoShutdown = true;
+	private DefaultHttpClient mHttpClient;
+	private boolean mIsShutdown = false;
+	private boolean mAutoShutdown = true;
 
 	
 	public ActivityHttpFunctionality(HostActivity activity) {
@@ -27,7 +44,7 @@ abstract public class ActivityHttpFunctionality extends ActivityUniqueAttachedFu
 
 	
 	public void setAutoShutdown(boolean value) {
-		autoShutdown = value;
+		mAutoShutdown = value;
 	}
 	
 	
@@ -54,26 +71,26 @@ abstract public class ActivityHttpFunctionality extends ActivityUniqueAttachedFu
 
 
 	protected boolean isHttpClientInitialized() {
-		return (httpClient != null) ? true : false;
+		return (mHttpClient != null) ? true : false;
 	}
 	
 	
 	@Override
 	protected void onStop() {
 		super.onStop();
-		if (httpClient != null) {
-			if (autoShutdown) {
+		if (mHttpClient != null) {
+			if (mAutoShutdown) {
 			    shutDownInBackground();
-				isShutdown = true;
+				mIsShutdown = true;
 			}
 		}
 	}
 
 
 	public void shutDown() {
-		if (httpClient != null && !isShutdown) {
+		if (mHttpClient != null && !mIsShutdown) {
 		    shutDownInBackground();
-			isShutdown = true;
+			mIsShutdown = true;
 		}
 	}
 
@@ -83,7 +100,7 @@ abstract public class ActivityHttpFunctionality extends ActivityUniqueAttachedFu
 	    Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                httpClient.getConnectionManager().shutdown();
+                mHttpClient.getConnectionManager().shutdown();
             }
         });
 	    
@@ -92,7 +109,7 @@ abstract public class ActivityHttpFunctionality extends ActivityUniqueAttachedFu
 	
 	
 	public boolean isShutdown() {
-		return isShutdown;
+		return mIsShutdown;
 	}
 	
 
@@ -100,10 +117,10 @@ abstract public class ActivityHttpFunctionality extends ActivityUniqueAttachedFu
 	
 	
 	public DefaultHttpClient getHttpClient() {
-		if (httpClient == null || isShutdown) {
-			httpClient = (DefaultHttpClient) createHttpClient();
+		if (mHttpClient == null || mIsShutdown) {
+			mHttpClient = (DefaultHttpClient) createHttpClient();
 		}
 
-		return httpClient;
+		return mHttpClient;
 	}
 }

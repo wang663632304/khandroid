@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2012-2013 Ognyan Bankov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.github.khandroid.activity;
 
 import android.os.Bundle;
@@ -7,16 +24,16 @@ import com.github.khandroid.misc.SuperNotCalledException;
 
 
 public class FragmentAttachedFunctionality implements FragmentAttachable {
-    private boolean called1;
-    private boolean called2;
-    private boolean called3;
-    private boolean called4;
-    private boolean called5;
-    private boolean called6;
-    private boolean called7;
-    private boolean called8;
-    private boolean called9;
-    private boolean called10;
+    private boolean mCalled1;
+    private boolean mCalled2;
+    private boolean mCalled3;
+    private boolean mCalled4;
+    private boolean mCalled5;
+    private boolean mCalled6;
+    private boolean mCalled7;
+    private boolean mCalled8;
+    private boolean mCalled9;
+    private boolean mCalled10;
     
     private HostFragment mFragment;  
     
@@ -31,72 +48,72 @@ public class FragmentAttachedFunctionality implements FragmentAttachable {
     public void FragmentLifeCycleEvent(int type, Bundle b) {
         switch (type) {
             case HostFragment.EVENT_ON_ATTACH:
-                called1 = false;
+                mCalled1 = false;
                 onAttach();
-                if (!called1) {
+                if (!mCalled1) {
                     throw new SuperNotCalledException("Super not called for onCreate()");
                 }
                 break;            
             case HostFragment.EVENT_ON_CREATE:
-                called2 = false;
+                mCalled2 = false;
                 onCreate(b);
-                if (!called2) {
+                if (!mCalled2) {
                     throw new SuperNotCalledException("Super not called for onCreate()");
                 }
                 break;
             case HostFragment.EVENT_ON_ACTIVITY_CREATED:
-                called3 = false;
+                mCalled3 = false;
                 onActivityCreated(b);
-                if (!called3) {
+                if (!mCalled3) {
                     throw new SuperNotCalledException("Super not called for onActivityCreated()");
                 } 
                 break;
             case HostFragment.EVENT_ON_START:
-                called4 = false;
+                mCalled4 = false;
                 onStart();
-                if (!called4) {
+                if (!mCalled4) {
                     throw new SuperNotCalledException("Super not called for onStart()");
                 } 
                 break;
             case HostFragment.EVENT_ON_RESUME:
-                called5 = false;
+                mCalled5 = false;
                 onResume();
-                if (!called5) {
+                if (!mCalled5) {
                     throw new SuperNotCalledException("Super not called for onResume()");
                 } 
                 break;
             case HostFragment.EVENT_ON_PAUSE:
-                called6 = false;
+                mCalled6 = false;
                 onPause();
-                if (!called6) {
+                if (!mCalled6) {
                     throw new SuperNotCalledException("Super not called for onPause()");
                 } 
                 break;
             case HostFragment.EVENT_ON_STOP:
-                called7 = false;
+                mCalled7 = false;
                 onStop();
-                if (!called7) {
+                if (!mCalled7) {
                     throw new SuperNotCalledException("Super not called for onStop()");
                 } 
                 break;
             case HostFragment.EVENT_ON_DESTROY:
-                called8 = false;
+                mCalled8 = false;
                 onDestroy();
-                if (!called8) {
+                if (!mCalled8) {
                     throw new SuperNotCalledException("Super not called for onStop()");
                 }    
                 break;
             case HostFragment.EVENT_ON_DETACH:
-                called9 = false;
+                mCalled9 = false;
                 onDetach();
-                if (!called9) {
+                if (!mCalled9) {
                     throw new SuperNotCalledException("Super not called for onStop()");
                 }
                 break;
             case HostFragment.EVENT_ON_SAVE_INSTANCE_STATE:
-                called10 = false;
+                mCalled10 = false;
                 onSaveInstanceState(b);
-                if (!called10) {
+                if (!mCalled10) {
                     throw new SuperNotCalledException("Super not called for onStop()");
                 }
                 break;
@@ -109,52 +126,52 @@ public class FragmentAttachedFunctionality implements FragmentAttachable {
     
     
     public void onAttach() {
-        called1 = true;
+        mCalled1 = true;
     }
 
     
     public void onCreate(Bundle savedInstanceState) {
-        called2 = true;
+        mCalled2 = true;
     }
     
 
     public void onActivityCreated(Bundle savedInstanceState) {
-        called3 = true;
+        mCalled3 = true;
     }
     
     
     public void onStart() {
-        called4 = true;
+        mCalled4 = true;
     }
     
     
     public void onResume() {
-        called5 = true;
+        mCalled5 = true;
     }
     
     
     public void onPause() {
-        called6 = true;
+        mCalled6 = true;
     }
     
     
     public void onStop() {
-        called7 = true;
+        mCalled7 = true;
     }
     
 
     public void onDestroy() {
-        called8 = true;
+        mCalled8 = true;
     }
 
     
     public void onDetach () {
-        called9 = true;
+        mCalled9 = true;
     }
 
     
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        called10 = true;
+        mCalled10 = true;
     }
     
     

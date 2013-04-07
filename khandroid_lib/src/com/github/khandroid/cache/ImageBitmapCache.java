@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2012-2013 Ognyan Bankov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.github.khandroid.cache;
 
 import java.io.File;
@@ -8,9 +25,9 @@ import android.graphics.BitmapFactory;
 
 
 public class ImageBitmapCache {
-    private final LruCache<String, Bitmap> memCache;
-    private final StorageCache filesCache;
-    private final int maxFileSize;
+    private final LruCache<String, Bitmap> mMemCache;
+    private final StorageCache mFilesCache;
+    private final int mMaxFileSize;
     
     
     private ImageBitmapCache(
@@ -22,22 +39,22 @@ public class ImageBitmapCache {
                        long removeLifetimeMoreThanOnCreate                       
                        ) {
 
-        this.maxFileSize = maxFileSize;
+        this.mMaxFileSize = maxFileSize;
         
-        memCache = new LruCache<String, Bitmap>(memMaxEntries);
-        filesCache = new StorageCache(cacheDir, storageCacheMaxTotalSize, maxFileSize, storageCacheMaxEntries, removeLifetimeMoreThanOnCreate);
+        mMemCache = new LruCache<String, Bitmap>(memMaxEntries);
+        mFilesCache = new StorageCache(cacheDir, storageCacheMaxTotalSize, maxFileSize, storageCacheMaxEntries, removeLifetimeMoreThanOnCreate);
     }
     
     
     public Bitmap get(String key) {
         Bitmap ret;
         
-        ret = memCache.get((String)key);
+        ret = mMemCache.get((String)key);
         if (ret == null) {
-            byte[] imageFileData = filesCache.get(key);
+            byte[] imageFileData = mFilesCache.get(key);
             if (imageFileData != null) {
                 ret = BitmapFactory.decodeByteArray(imageFileData, 0, imageFileData.length);
-                memCache.put(key, ret);
+                mMemCache.put(key, ret);
             }
         }
         
@@ -46,12 +63,12 @@ public class ImageBitmapCache {
     
 
     public LruCache<String, Bitmap> getMemCache() {
-        return memCache;
+        return mMemCache;
     }
 
 
     public StorageCache getFilesCache() {
-        return filesCache;
+        return mFilesCache;
     }
 
 
@@ -60,11 +77,11 @@ public class ImageBitmapCache {
         
         byte[] fileData = (byte[]) imageFileData;
         
-        if (fileData.length <= maxFileSize) {
+        if (fileData.length <= mMaxFileSize) {
             Bitmap tmp = BitmapFactory.decodeByteArray(imageFileData, 0, imageFileData.length);
-            memCache.put(filename, tmp);
+            mMemCache.put(filename, tmp);
             
-            ret = filesCache.put(filename, imageFileData);
+            ret = mFilesCache.put(filename, imageFileData);
         }
         
         
@@ -73,22 +90,22 @@ public class ImageBitmapCache {
     
     
     public void clearAll() {
-        memCache.clear();
-        filesCache.clearAll();
+        mMemCache.clear();
+        mFilesCache.clearAll();
     }
 
     public void remove(Object key) {
-        if (memCache.containsKey(key)) {
-            memCache.remove((String) key);
+        if (mMemCache.containsKey(key)) {
+            mMemCache.remove((String) key);
         }
 
-        if (filesCache.containsKey(key)) { 
-            filesCache.remove(key);
+        if (mFilesCache.containsKey(key)) { 
+            mFilesCache.remove(key);
         }
     }
 
     public boolean containsKey(Object key) {
-        return (memCache.containsKey(key) || filesCache.containsKey(key));
+        return (mMemCache.containsKey(key) || mFilesCache.containsKey(key));
     }
 
     

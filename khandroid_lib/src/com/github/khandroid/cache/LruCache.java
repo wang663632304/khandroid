@@ -16,6 +16,10 @@ package com.github.khandroid.cache;
  * limitations under the License.
  */
 
+/*
+ * Change notice: this file was modified from it's original state by Ognyan Bankov.
+ */
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -29,17 +33,17 @@ import java.util.Map.Entry;
  * overview.
  */
 public class LruCache<K, V> {
-    private final LinkedHashMap<K, V> map;
+    private final LinkedHashMap<K, V> mMap;
 
     /** Size of this cache in units. Not necessarily the number of elements. */
-    private int size;
-    private int maxSize;
+    private int mSize;
+    private int mMaxSize;
 
-    private int putCount;
-    private int createCount;
-    private int evictionCount;
-    private int hitCount;
-    private int missCount;
+    private int mPutCount;
+    private int mCreateCount;
+    private int mEvictionCount;
+    private int mHitCount;
+    private int mMissCount;
 
     /**
      * @param maxSize for caches that do not override {@link #sizeOf}, this is
@@ -50,8 +54,8 @@ public class LruCache<K, V> {
         if (maxSize <= 0) {
             throw new IllegalArgumentException("maxSize <= 0");
         }
-        this.maxSize = maxSize;
-        this.map = new LinkedHashMap<K, V>(0, 0.75f, true);
+        this.mMaxSize = maxSize;
+        this.mMap = new LinkedHashMap<K, V>(0, 0.75f, true);
     }
 
     /**
@@ -67,12 +71,12 @@ public class LruCache<K, V> {
 
         V mapValue;
         synchronized (this) {
-            mapValue = map.get(key);
+            mapValue = mMap.get(key);
             if (mapValue != null) {
-                hitCount++;
+                mHitCount++;
                 return mapValue;
             }
-            missCount++;
+            mMissCount++;
         }
 
         /*
@@ -88,14 +92,14 @@ public class LruCache<K, V> {
         }
 
         synchronized (this) {
-            createCount++;
-            mapValue = map.put(key, createdValue);
+            mCreateCount++;
+            mapValue = mMap.put(key, createdValue);
 
             if (mapValue != null) {
                 // There was a conflict so undo that last put
-                map.put(key, mapValue);
+                mMap.put(key, mapValue);
             } else {
-                size += safeSizeOf(key, createdValue);
+                mSize += safeSizeOf(key, createdValue);
             }
         }
 
@@ -103,7 +107,7 @@ public class LruCache<K, V> {
             entryRemoved(false, key, createdValue, mapValue);
             return mapValue;
         } else {
-            trimToSize(maxSize);
+            trimToSize(mMaxSize);
             return createdValue;
         }
     }
@@ -121,11 +125,11 @@ public class LruCache<K, V> {
 
         V previous;
         synchronized (this) {
-            putCount++;
-            size += safeSizeOf(key, value);
-            previous = map.put(key, value);
+            mPutCount++;
+            mSize += safeSizeOf(key, value);
+            previous = mMap.put(key, value);
             if (previous != null) {
-                size -= safeSizeOf(key, previous);
+                mSize -= safeSizeOf(key, previous);
             }
         }
 
@@ -133,7 +137,7 @@ public class LruCache<K, V> {
             entryRemoved(false, key, previous, value);
         }
 
-        trimToSize(maxSize);
+        trimToSize(mMaxSize);
         return previous;
     }
 
@@ -146,21 +150,21 @@ public class LruCache<K, V> {
             K key;
             V value;
             synchronized (this) {
-                if (size < 0 || (map.isEmpty() && size != 0)) {
+                if (mSize < 0 || (mMap.isEmpty() && mSize != 0)) {
                     throw new IllegalStateException(getClass().getName()
                             + ".sizeOf() is reporting inconsistent results!");
                 }
 
-                if (size <= maxSize || map.isEmpty()) {
+                if (mSize <= maxSize || mMap.isEmpty()) {
                     break;
                 }
 
-                Map.Entry<K, V> toEvict = map.entrySet().iterator().next();
+                Map.Entry<K, V> toEvict = mMap.entrySet().iterator().next();
                 key = toEvict.getKey();
                 value = toEvict.getValue();
-                map.remove(key);
-                size -= safeSizeOf(key, value);
-                evictionCount++;
+                mMap.remove(key);
+                mSize -= safeSizeOf(key, value);
+                mEvictionCount++;
             }
 
             entryRemoved(true, key, value, null);
@@ -179,9 +183,9 @@ public class LruCache<K, V> {
 
         V previous;
         synchronized (this) {
-            previous = map.remove(key);
+            previous = mMap.remove(key);
             if (previous != null) {
-                size -= safeSizeOf(key, previous);
+                mSize -= safeSizeOf(key, previous);
             }
         }
 
@@ -260,7 +264,7 @@ public class LruCache<K, V> {
      * the sizes of the entries in this cache.
      */
     public synchronized final int size() {
-        return size;
+        return mSize;
     }
 
     /**
@@ -269,14 +273,14 @@ public class LruCache<K, V> {
      * maximum sum of the sizes of the entries in this cache.
      */
     public synchronized final int maxSize() {
-        return maxSize;
+        return mMaxSize;
     }
 
     /**
      * Returns the number of times {@link #get} returned a value.
      */
     public synchronized final int hitCount() {
-        return hitCount;
+        return mHitCount;
     }
 
     /**
@@ -284,28 +288,28 @@ public class LruCache<K, V> {
      * value to be created.
      */
     public synchronized final int missCount() {
-        return missCount;
+        return mMissCount;
     }
 
     /**
      * Returns the number of times {@link #create(Object)} returned a value.
      */
     public synchronized final int createCount() {
-        return createCount;
+        return mCreateCount;
     }
 
     /**
      * Returns the number of times {@link #put} was called.
      */
     public synchronized final int putCount() {
-        return putCount;
+        return mPutCount;
     }
 
     /**
      * Returns the number of values that have been evicted.
      */
     public synchronized final int evictionCount() {
-        return evictionCount;
+        return mEvictionCount;
     }
 
     /**
@@ -313,33 +317,33 @@ public class LruCache<K, V> {
      * recently accessed to most recently accessed.
      */
     public synchronized final Map<K, V> snapshot() {
-        return new LinkedHashMap<K, V>(map);
+        return new LinkedHashMap<K, V>(mMap);
     }
 
     @Override public synchronized final String toString() {
-        int accesses = hitCount + missCount;
-        int hitPercent = accesses != 0 ? (100 * hitCount / accesses) : 0;
+        int accesses = mHitCount + mMissCount;
+        int hitPercent = accesses != 0 ? (100 * mHitCount / accesses) : 0;
         return String.format("LruCache[maxSize=%d,hits=%d,misses=%d,hitRate=%d%%]",
-                maxSize, hitCount, missCount, hitPercent);
+                mMaxSize, mHitCount, mMissCount, hitPercent);
     }
     
     
 	public synchronized final Set<K> keySet() {
-		return map.keySet();
+		return mMap.keySet();
 	}
 	
 	
 	public synchronized Set<Entry<K, V>> entrySet() {
-		return map.entrySet();
+		return mMap.entrySet();
 	}
 	
 	
 	public synchronized boolean containsKey(Object key) {
-		return map.containsKey(key);
+		return mMap.containsKey(key);
 	}
 	
 
 	public synchronized void clear() {
-		map.clear();
+		mMap.clear();
 	}
 }

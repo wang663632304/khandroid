@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2012-2013 Ognyan Bankov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.github.khandroid.activity;
 
 import java.util.ArrayList;
@@ -19,7 +36,7 @@ import khandroid.ext.apache.http.impl.cookie.BasicClientCookie;
 
 abstract public class FragmentHttpWCookiesFunctionality extends FragmentHttpFunctionality {
     public static final String COOKIES_PARAM_NAME = "_cookies";
-    private BasicCookieStore cookies;
+    private BasicCookieStore mCookies;
 
 
     public FragmentHttpWCookiesFunctionality(HostFragment fragment) {
@@ -30,7 +47,7 @@ abstract public class FragmentHttpWCookiesFunctionality extends FragmentHttpFunc
     
     public FragmentHttpWCookiesFunctionality(HostFragment fragment, BasicCookieStore cookies) {
         this(fragment);
-        this.cookies = cookies;
+        this.mCookies = cookies;
     }   
 
     
@@ -47,14 +64,14 @@ abstract public class FragmentHttpWCookiesFunctionality extends FragmentHttpFunc
 
 
     protected void addCookie(Cookie cookie) {
-        cookies.addCookie(cookie);
+        mCookies.addCookie(cookie);
     }
 
 
     protected boolean cookieExists(Cookie cookie) {
         boolean ret = false;
         
-        List<Cookie> l = cookies.getCookies();
+        List<Cookie> l = mCookies.getCookies();
         for(Cookie c : l) {
             if (c.equals(cookie)) {
                 ret = true;
@@ -69,7 +86,7 @@ abstract public class FragmentHttpWCookiesFunctionality extends FragmentHttpFunc
     protected boolean cookieExists(String name, String domain, String path) {
         boolean ret = false;
         
-        List<Cookie> l = cookies.getCookies();
+        List<Cookie> l = mCookies.getCookies();
         for(Cookie c : l) {
             if (c.getName().equals(name) && c.getDomain().equals(domain) && c.getPath().equals(path)) {
                 ret = true;
@@ -84,7 +101,7 @@ abstract public class FragmentHttpWCookiesFunctionality extends FragmentHttpFunc
     protected String getCookieValue(String name, String domain, String path) {
         String ret = null;
         
-        List<Cookie> l = cookies.getCookies();
+        List<Cookie> l = mCookies.getCookies();
         for(Cookie c : l) {
             if (c.getName().equals(name) && c.getDomain().equals(domain) && c.getPath().equals(path)) {
                 ret = c.getValue();
@@ -98,7 +115,7 @@ abstract public class FragmentHttpWCookiesFunctionality extends FragmentHttpFunc
     
     public DefaultHttpClient getHttpClient() {
         DefaultHttpClient httpClient = (DefaultHttpClient) super.getHttpClient();
-        httpClient.setCookieStore(cookies);
+        httpClient.setCookieStore(mCookies);
 
         return httpClient;
     }
@@ -113,8 +130,8 @@ abstract public class FragmentHttpWCookiesFunctionality extends FragmentHttpFunc
 
 
     private void loadIncommingCookies(Bundle savedInstanceState, Intent i) {
-        if (cookies == null) {
-            cookies = new BasicCookieStore();
+        if (mCookies == null) {
+            mCookies = new BasicCookieStore();
         }
         
         Bundle extras;
@@ -134,7 +151,7 @@ abstract public class FragmentHttpWCookiesFunctionality extends FragmentHttpFunc
                 c2.setVersion(c.getVersion());
                 c2.setExpiryDate(c.getExpiryDate());
                 
-                cookies.addCookie(c2);
+                mCookies.addCookie(c2);
             }
         }
     }

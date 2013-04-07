@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2012-2013 Ognyan Bankov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.github.khandroid.activity;
 
 import android.content.Context;
@@ -6,8 +23,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 
 abstract public class FragmentDbFunctionality extends FragmentUniqueAttachedFunctionality implements DbFunctionality {
-    private SQLiteOpenHelper dbHelper;  
-    private boolean autoClose = true;
+    private SQLiteOpenHelper mDbHelper;  
+    private boolean mAutoClose = true;
     
     public FragmentDbFunctionality(HostFragment fragment) {
         super(fragment);
@@ -15,12 +32,12 @@ abstract public class FragmentDbFunctionality extends FragmentUniqueAttachedFunc
 
 
     public boolean getAutoClose() {
-        return autoClose;
+        return mAutoClose;
     }
 
 
     public void setAutoClose(boolean autoClose) {
-        this.autoClose = autoClose;
+        this.mAutoClose = autoClose;
     }
 
 
@@ -31,29 +48,29 @@ abstract public class FragmentDbFunctionality extends FragmentUniqueAttachedFunc
     public void onStop() {
         super.onStop();
 
-        if (autoClose) {
-            if (dbHelper != null) {
-                dbHelper.close();
+        if (mAutoClose) {
+            if (mDbHelper != null) {
+                mDbHelper.close();
             }
         }
     }   
     
     
     public SQLiteDatabase getDbcRW() {
-        if (dbHelper == null) {
-            dbHelper = createDbOpenHelper(getFragment().getActivity());
+        if (mDbHelper == null) {
+            mDbHelper = createDbOpenHelper(getFragment().getActivity());
         }
 
-        return dbHelper.getWritableDatabase();
+        return mDbHelper.getWritableDatabase();
     }
 
 
     public SQLiteDatabase getDbcRO() {
-        if (dbHelper == null) {
-            dbHelper = createDbOpenHelper(getFragment().getActivity());
+        if (mDbHelper == null) {
+            mDbHelper = createDbOpenHelper(getFragment().getActivity());
         }
 
-        return dbHelper.getReadableDatabase();
+        return mDbHelper.getReadableDatabase();
     }
     
 
