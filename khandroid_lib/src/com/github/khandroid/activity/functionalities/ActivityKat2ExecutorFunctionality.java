@@ -71,7 +71,8 @@ public class ActivityKat2ExecutorFunctionality extends ActivityAttachedFunctiona
     public <U> void execute(KhandroidAsyncTask2<?, ?, U> task,
                                KhandroidAsyncTask2.TaskCompletedListener<U> listener
                            ) {
-        execute(task, listener, null);
+        
+        mKatExecutor.execute(task);
     }
     
     
