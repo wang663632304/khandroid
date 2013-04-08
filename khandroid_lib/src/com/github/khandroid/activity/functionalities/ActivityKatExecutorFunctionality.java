@@ -15,10 +15,14 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.activity.functionalities;
 
 
+import com.github.khandroid.activity.ActivityUniqueAttachedFunctionality;
+import com.github.khandroid.activity.HostActivity;
+import com.github.khandroid.activity.KatExecutor;
 import com.github.khandroid.activity.KatExecutor.IKatExecutorFunctionality;
+import com.github.khandroid.activity.KatExecutor.IKatExecutorFunctionality.DialogCreator;
 import com.github.khandroid.misc.KhandroidAsyncTask;
 import com.github.khandroid.misc.KhandroidLog;
 

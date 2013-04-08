@@ -15,11 +15,12 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.activity.functionalities;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.khandroid.activity.HostActivity;
 import com.github.khandroid.misc.KhandroidLog;
 import com.github.khandroid.rest.ParcelableCookie;
 

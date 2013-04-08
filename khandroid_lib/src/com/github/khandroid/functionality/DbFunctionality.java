@@ -15,11 +15,14 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.functionality;
 
-public class FragmentUniqueAttachedFunctionality extends FragmentAttachedFunctionality {
-    public FragmentUniqueAttachedFunctionality(HostFragment fragment) {
-        super(fragment);
-    }
+import android.database.sqlite.SQLiteDatabase;
 
+
+public interface DbFunctionality {
+    public boolean getAutoClose();
+    public void setAutoClose(boolean autoClose);
+    public SQLiteDatabase getDbcRW();
+    public SQLiteDatabase getDbcRO();
 }

@@ -15,8 +15,10 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.fragment;
 
+import com.github.khandroid.activity.KatExecutor;
+import com.github.khandroid.activity.KatExecutor.IKatExecutorFunctionality;
 import com.github.khandroid.activity.KatExecutor.IKatExecutorFunctionality.DialogCreator;
 import com.github.khandroid.misc.KhandroidAsyncTask;
 

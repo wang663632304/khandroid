@@ -125,7 +125,7 @@ public class KatExecutor {
     }
     
     
-    protected void setProgressDailog(ProgressDialog dialog) {
+    public void setProgressDailog(ProgressDialog dialog) {
         mProgressDailog = dialog;
     }
     

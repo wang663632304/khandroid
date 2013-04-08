@@ -21,65 +21,54 @@ import java.security.GeneralSecurityException;
 
 import com.github.khandroid.misc.KhandroidLog;
 
-import khandroid.ext.apache.http.client.params.ClientPNames;
 import khandroid.ext.apache.http.conn.ClientConnectionManager;
 import khandroid.ext.apache.http.conn.scheme.PlainSocketFactory;
 import khandroid.ext.apache.http.conn.scheme.Scheme;
 import khandroid.ext.apache.http.conn.scheme.SchemeRegistry;
 import khandroid.ext.apache.http.impl.client.DefaultHttpClient;
-import khandroid.ext.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import khandroid.ext.apache.http.impl.conn.PoolingClientConnectionManager;
 import khandroid.ext.apache.http.params.HttpParams;
 
 
-public class SslHttpClient extends DefaultHttpClient {
+public class DefaultSslHttpClient extends DefaultHttpClient {
 	private InputStream keyStore;
 	private String keyStorePassword;
 	
 	@SuppressWarnings("unused")
-	private SslHttpClient() {
+	private DefaultSslHttpClient() {
 		// no parameterless constructor
 	}
 
 	
-	public SslHttpClient(InputStream keyStore, String keyStorePassword) {
+	public DefaultSslHttpClient(InputStream keyStore, String keyStorePassword) {
 		this.keyStore = keyStore;
 		this.keyStorePassword = keyStorePassword;
 	}	
 	
 
-	public SslHttpClient(ClientConnectionManager conman, InputStream keyStore, String keyStorePassword) {
+	public DefaultSslHttpClient(ClientConnectionManager conman, InputStream keyStore, String keyStorePassword) {
 		super(conman);
 		this.keyStore = keyStore;
 		this.keyStorePassword = keyStorePassword;
 	}
 
 
-	public SslHttpClient(final ClientConnectionManager conman, 
+	public DefaultSslHttpClient(final ClientConnectionManager conman, 
 	                    		final HttpParams params,
 	                    		InputStream keyStore, 
 	                    		String keyStorePassword
 	                    		) {
-		super(conman, checkForInvalidParams(params));
+		super(conman, params);
 		this.keyStore = keyStore;
 		this.keyStorePassword = keyStorePassword;
 	}
 	
 	
-    public SslHttpClient(final HttpParams params, InputStream keyStore, String keyStorePassword) {
-        super(null, checkForInvalidParams(params));
+    public DefaultSslHttpClient(final HttpParams params, InputStream keyStore, String keyStorePassword) {
+        super(null, params);
 		this.keyStore = keyStore;
 		this.keyStorePassword = keyStorePassword;
     }	
-    
-
-    private static HttpParams checkForInvalidParams(HttpParams params) {
-	    String className = (String) params.getParameter(ClientPNames.CONNECTION_MANAGER_FACTORY_CLASS_NAME);
-        if (className != null) {
-        	throw new IllegalArgumentException("Don't try to pass ClientPNames.CONNECTION_MANAGER_FACTORY_CLASS_NAME parameter. We use our own connection manager factory anyway...");
-        }
-        
-        return params;
-    }
  
     
     @Override
@@ -90,10 +79,10 @@ public class SslHttpClient extends DefaultHttpClient {
 		Scheme s = new Scheme("http", 80, pfs);
 		registry.register(s);
 		
-		ThreadSafeClientConnManager ret; 
+		PoolingClientConnectionManager ret; 
 		try {
 			registry.register(new Scheme("https", 443, new SslSocketFactory(keyStore, keyStorePassword)));
-			ret = new ThreadSafeClientConnManager(registry); 
+			ret = new PoolingClientConnectionManager(registry); 
 		} catch (GeneralSecurityException e) {
 			KhandroidLog.d("Cannot create socket factor.", e);
 			ret = null;

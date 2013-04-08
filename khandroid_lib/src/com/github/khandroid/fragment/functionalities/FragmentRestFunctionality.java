@@ -15,7 +15,7 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.fragment.functionalities;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -28,6 +28,10 @@ import khandroid.ext.apache.http.cookie.Cookie;
 import khandroid.ext.apache.http.impl.client.DefaultHttpClient;
 import khandroid.ext.apache.http.impl.cookie.BasicClientCookie;
 
+import com.github.khandroid.fragment.FragmentAttachable;
+import com.github.khandroid.fragment.HostFragment;
+import com.github.khandroid.fragment.FragmentAttachable.HostingAble;
+import com.github.khandroid.functionality.RestFunctionality;
 import com.github.khandroid.rest.MalformedResponseException;
 import com.github.khandroid.rest.RestExchange;
 import com.github.khandroid.rest.RestExchangeFailedException;

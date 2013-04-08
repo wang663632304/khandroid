@@ -15,7 +15,13 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.activity.functionalities;
+
+import com.github.khandroid.activity.ActivityAttachable;
+import com.github.khandroid.activity.ActivityUniqueAttachedFunctionality;
+import com.github.khandroid.activity.HostActivity;
+import com.github.khandroid.activity.ActivityAttachable.HostingAble;
+import com.github.khandroid.functionality.DbFunctionality;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

@@ -15,7 +15,7 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

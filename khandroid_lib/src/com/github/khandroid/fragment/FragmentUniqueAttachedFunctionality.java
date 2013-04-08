@@ -15,20 +15,12 @@
  */
 
 
-package com.github.khandroid.activity;
-
-import java.io.IOException;
-
-import khandroid.ext.apache.http.client.ClientProtocolException;
-import khandroid.ext.apache.http.client.methods.HttpUriRequest;
-import khandroid.ext.apache.http.impl.client.DefaultHttpClient;
+package com.github.khandroid.fragment;
 
 
-public interface HttpFunctionality {
-    public void setAutoShutdown(boolean value);
-    public boolean isOnline();
-    public String execute(HttpUriRequest httpRequest) throws ClientProtocolException, IOException;
-    public void shutDown();
-    
-    public DefaultHttpClient getHttpClient();
+public class FragmentUniqueAttachedFunctionality extends FragmentAttachedFunctionality {
+    public FragmentUniqueAttachedFunctionality(HostFragment fragment) {
+        super(fragment);
+    }
+
 }

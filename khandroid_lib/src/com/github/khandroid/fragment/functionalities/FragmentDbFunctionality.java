@@ -15,7 +15,12 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.fragment.functionalities;
+
+import com.github.khandroid.fragment.FragmentAttachable;
+import com.github.khandroid.fragment.FragmentUniqueAttachedFunctionality;
+import com.github.khandroid.fragment.HostFragment;
+import com.github.khandroid.functionality.DbFunctionality;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

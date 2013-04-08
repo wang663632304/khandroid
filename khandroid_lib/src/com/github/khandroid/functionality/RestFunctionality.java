@@ -15,7 +15,7 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.functionality;
 
 import com.github.khandroid.rest.RestExchange;
 import com.github.khandroid.rest.RestExchangeFailedException;

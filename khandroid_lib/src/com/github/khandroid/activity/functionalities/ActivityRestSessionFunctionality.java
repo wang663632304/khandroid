@@ -15,7 +15,7 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.activity.functionalities;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -28,20 +28,24 @@ import khandroid.ext.apache.http.cookie.Cookie;
 import khandroid.ext.apache.http.impl.client.DefaultHttpClient;
 import khandroid.ext.apache.http.impl.cookie.BasicClientCookie;
 
+import com.github.khandroid.activity.ActivityAttachable;
+import com.github.khandroid.activity.HostActivity;
+import com.github.khandroid.activity.ActivityAttachable.HostingAble;
+import com.github.khandroid.functionality.RestFunctionality;
 import com.github.khandroid.rest.MalformedResponseException;
 import com.github.khandroid.rest.RestExchange;
 import com.github.khandroid.rest.RestExchangeFailedException;
 
 
-abstract public class ActivityRestFunctionality extends ActivityHttpFunctionality implements RestFunctionality {
-	public ActivityRestFunctionality(HostingAble activity) {
+abstract public class ActivityRestSessionFunctionality extends ActivityHttpFunctionality implements RestFunctionality {
+	public ActivityRestSessionFunctionality(HostingAble activity) {
 		super((HostActivity) activity);
 	}
 
 	
 	public void executeExchange(RestExchange x) throws RestExchangeFailedException {
 		try {
-			DefaultHttpClient httpClient = getHttpClient();
+		    DefaultHttpClient httpClient = getHttpClient();
 			injectSessionCookie(httpClient, ((HostingAble) getActivity()).retrieveSessionCookie());
 			
 //			String rawResponse = httpClient.execute(x.getRequest().createHttpRequest(), responseHandler);
@@ -130,4 +134,12 @@ abstract public class ActivityRestFunctionality extends ActivityHttpFunctionalit
 		 */
 		BasicClientCookie retrieveSessionCookie();
 	}	
+	
+	@Override
+    abstract protected DefaultHttpClient createHttpClient();
+
+    @Override
+    public DefaultHttpClient getHttpClient() {
+        return (DefaultHttpClient) super.getHttpClient();
+    }
 }

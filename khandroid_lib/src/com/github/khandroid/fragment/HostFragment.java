@@ -15,9 +15,10 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.fragment;
 
 import java.util.ArrayList;
+
 
 import android.app.Activity;
 import android.os.Bundle;

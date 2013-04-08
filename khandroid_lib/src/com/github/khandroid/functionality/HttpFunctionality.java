@@ -15,14 +15,20 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.functionality;
 
-import android.database.sqlite.SQLiteDatabase;
+import java.io.IOException;
+
+import khandroid.ext.apache.http.client.ClientProtocolException;
+import khandroid.ext.apache.http.client.HttpClient;
+import khandroid.ext.apache.http.client.methods.HttpUriRequest;
 
 
-public interface DbFunctionality {
-    public boolean getAutoClose();
-    public void setAutoClose(boolean autoClose);
-    public SQLiteDatabase getDbcRW();
-    public SQLiteDatabase getDbcRO();
+public interface HttpFunctionality {
+    public void setAutoShutdown(boolean value);
+    public boolean isOnline();
+    public String execute(HttpUriRequest httpRequest) throws ClientProtocolException, IOException;
+    public void shutDown();
+    
+    public HttpClient getHttpClient();
 }

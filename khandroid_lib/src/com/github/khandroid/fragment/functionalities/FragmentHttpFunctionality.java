@@ -15,7 +15,7 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.fragment.functionalities;
 
 import java.io.IOException;
 
@@ -28,6 +28,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.github.khandroid.fragment.FragmentUniqueAttachedFunctionality;
+import com.github.khandroid.fragment.HostFragment;
+import com.github.khandroid.functionality.HttpFunctionality;
 import com.github.khandroid.http.KhandroidBasicResponseHandler;
 
 

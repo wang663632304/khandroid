@@ -15,7 +15,7 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.fragment.functionalities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.github.khandroid.fragment.HostFragment;
 import com.github.khandroid.misc.KhandroidLog;
 import com.github.khandroid.rest.ParcelableCookie;
 

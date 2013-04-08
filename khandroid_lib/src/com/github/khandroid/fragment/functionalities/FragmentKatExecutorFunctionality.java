@@ -15,9 +15,14 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.fragment.functionalities;
 
+import com.github.khandroid.activity.KatExecutor;
 import com.github.khandroid.activity.KatExecutor.IKatExecutorFunctionality;
+import com.github.khandroid.activity.KatExecutor.IKatExecutorFunctionality.DialogCreator;
+import com.github.khandroid.fragment.FraDiaKatProgress;
+import com.github.khandroid.fragment.FragmentUniqueAttachedFunctionality;
+import com.github.khandroid.fragment.HostFragment;
 import com.github.khandroid.misc.KhandroidAsyncTask;
 
 import android.app.Activity;
