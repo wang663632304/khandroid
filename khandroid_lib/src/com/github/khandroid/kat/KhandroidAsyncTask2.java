@@ -20,33 +20,28 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.github.khandroid.misc.KatExecutor.IKatExecutorFunctionality;
 import com.github.khandroid.misc.KhandroidLog;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
 
-abstract public class KhandroidAsyncTask2<Params, Progress, ResultData> {
-    private IKatExecutorFunctionality mExecutor;
+abstract public class KhandroidAsyncTask2<Params, Progress, Result> {
+    private Kat2Executor mExecutor;
     private InnerAsyncTask mTask;
 
 
-    public KhandroidAsyncTask2(IKatExecutorFunctionality executor) {
-        attach(executor);
-        
+    public KhandroidAsyncTask2() {
         mTask = new InnerAsyncTask(); 
     }
 
+//    public final AsyncTask<Params, Progress, Result> execute() {
+//        return mTask.execute();
+//    }
     
-    public final AsyncTask<Params, Progress, Result<ResultData>> execute(Params... params) {
-        if (mExecutor != null) {
-            KhandroidLog.v("Executing KhandroidAsyncTask");
-            return mTask.execute(params);
-        } else {
-            throw new IllegalStateException("Trying to execute the task before setting executor with pluggedTo()");
-        }
+    public final AsyncTask<Params, Progress, Result> execute(Kat2Executor executor, Params... params) {
+        attach(executor);
+        KhandroidLog.v("Executing KhandroidAsyncTask");
+        return mTask.execute(params);
     }
 
     public void detach() {
@@ -55,7 +50,7 @@ abstract public class KhandroidAsyncTask2<Params, Progress, ResultData> {
     }
 
 
-    public void attach(IKatExecutorFunctionality executor) {
+    public void attach(Kat2Executor executor) {
         if (executor != null) {
             KhandroidLog.v("attach " + this);
             this.mExecutor = executor;
@@ -65,17 +60,8 @@ abstract public class KhandroidAsyncTask2<Params, Progress, ResultData> {
     }
     
     
-    public Activity getActivity() {
-        if (mExecutor != null) {
-            return mExecutor.getActivity();    
-        } else {
-            return null;
-        }
-    }
-
-
     public AsyncTask.Status getStatus() {
-        if (mExecutor != null) {
+        if (mTask != null) {
             return mTask.getStatus();    
         } else {
             return null;
@@ -93,42 +79,17 @@ abstract public class KhandroidAsyncTask2<Params, Progress, ResultData> {
     }
     
     
-    public final Result<ResultData> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public final Result get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         return mTask.get(timeout, unit);
     }
     
     
-    public final Result<ResultData> get() throws InterruptedException, ExecutionException {
+    public final Result get() throws InterruptedException, ExecutionException {
         return mTask.get();
     }
                                  
     
-    public static class Result<ResultData> { 
-        private final int status;
-        private final ResultData data;
-        
-        public Result(int status, ResultData result) {
-            super();
-            this.status = status;
-            this.data = result;
-        }
-
-        public int getStatus() {
-            return status;
-        }
-
-        public ResultData getData() {
-            return data;
-        }
-    }
-    
-    
-    protected ProgressDialog getExecutorDialog() {
-        return mExecutor.getProgressDailog();
-    }
-    
-    
-    protected void onPostExecute(Result<ResultData> result) {
+    protected void onPostExecute(Result result) {
         // intentionally left empty
     }
 
@@ -153,10 +114,10 @@ abstract public class KhandroidAsyncTask2<Params, Progress, ResultData> {
     }
     
     
-    abstract protected Result<ResultData> doInBackground(Params... params);
+    abstract protected Result doInBackground(Params... params);
     
     
-    private class InnerAsyncTask extends AsyncTask<Params, Progress, Result<ResultData>> {
+    private class InnerAsyncTask extends AsyncTask<Params, Progress, Result> {
         @Override
         protected void onPreExecute() {
             KhandroidAsyncTask2.this.onPreExecute();
@@ -164,7 +125,7 @@ abstract public class KhandroidAsyncTask2<Params, Progress, ResultData> {
 
 
         @Override
-        protected void onPostExecute(Result<ResultData> result) {
+        protected void onPostExecute(Result result) {
             KhandroidLog.v("onPostExecute");
             KhandroidAsyncTask2.this.onPostExecute(result);
             mExecutor.onTaskCompleted(KhandroidAsyncTask2.this);
@@ -184,7 +145,7 @@ abstract public class KhandroidAsyncTask2<Params, Progress, ResultData> {
 
 
         @Override
-        protected Result<ResultData> doInBackground(Params... params) {
+        protected Result doInBackground(Params... params) {
             return KhandroidAsyncTask2.this.doInBackground(params);
         }
 
@@ -195,7 +156,12 @@ abstract public class KhandroidAsyncTask2<Params, Progress, ResultData> {
     }
 
 
-    public IKatExecutorFunctionality getExecutor() {
+    public Kat2Executor getExecutor() {
         return mExecutor;
+    }
+    
+    
+    public interface TaskCompletedListener<T> {
+        void onTaskCompleted(T result); 
     }
 }

@@ -2,24 +2,29 @@ package com.github.khandroid.kat;
 
 import com.github.khandroid.misc.KhandroidLog;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 
 
 
 public class Kat2Executor {
     private KhandroidAsyncTask2<?, ?, ?> mTask;
-    
+    private Kat2ExecutorFunctionality mHost; 
     
     public Kat2Executor(Kat2ExecutorFunctionality host) {
         super();
-        mHost = host;
     }
     
     
+    @SuppressWarnings("unchecked")
+    public <T> void execute(KhandroidAsyncTask2<T, ?, ?> task) {
+        mTask = task;
+        task.attach(this);
+        task.execute(this);
+    }
+    
     public <T> void execute(KhandroidAsyncTask2<T, ?, ?> task, T... params) {
         mTask = task;
-        task.execute(params);
+        task.execute(this, params);
     }
     
     
@@ -30,6 +35,7 @@ public class Kat2Executor {
 
     public void setTask(KhandroidAsyncTask2<?, ?, ?> task) {
         mTask = task;
+        mTask.attach(this);
     }
 
 
@@ -71,27 +77,38 @@ public class Kat2Executor {
     public void onTaskCancelled() {
         KhandroidLog.v("onTaskCancelled");
         mTask.detach();
+        mTask = null;
+
     }
     
     
     public void onTaskCompleted(KhandroidAsyncTask2<?, ?, ?> task) {
         KhandroidLog.v("onTaskCompleted");
-        if (task == mTask) { // same instance
+//        if (task == mTask) { // same instance
             mTask.detach();
-        }
+            mTask = null;
+//        }
+          //TODO        mHost.onTaskCompleted();
     }
     
     
     public interface Kat2ExecutorFunctionality {
-        public Activity getActivity();
-        
-        public <T> void execute(KhandroidAsyncTask2<T, ?, ?> task, T... params);
-        public AsyncTask.Status getTaskStatus();
-        public boolean isExecuting();
-        public boolean cancelExecution(boolean mayInterruptIfRunning);
-        public void onTaskCancelled();
-        public void onTaskCompleted(KhandroidAsyncTask2<?, ?, ?> task);
-    }    
+//        KhandroidAsyncTask<?, ?, ?> getTask();
+        void onTaskCancelled();
+        void onTaskCompleted(KhandroidAsyncTask2<?, ?, ?> task);
+    }
+    
+    
+//    public interface Kat2ExecutorFunctionality {
+//        public Activity getActivity();
+//        
+//        public <T> void execute(KhandroidAsyncTask2<T, ?, ?> task, T... params);
+//        public AsyncTask.Status getTaskStatus();
+//        public boolean isExecuting();
+//        public boolean cancelExecution(boolean mayInterruptIfRunning);
+//        public void onTaskCancelled();
+//        public void onTaskCompleted(KhandroidAsyncTask2<?, ?, ?> task);
+//    }    
 }
 
 
