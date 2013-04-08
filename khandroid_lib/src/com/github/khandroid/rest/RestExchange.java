@@ -28,16 +28,16 @@ import khandroid.ext.apache.http.client.ResponseHandler;
 import khandroid.ext.apache.http.client.methods.HttpUriRequest;
 
 
-abstract public class RestExchange {
+abstract public class RestExchange<T> {
 	private RestRequest mRequest;
 	private boolean mExecuted = false;
-	private RestResponse mResp;
-	private Object mResult;
+	private RestResponse mResponse;
+	private T mResult;
 	private boolean mIsOk;
 
 	
 	abstract protected RestRequest createRequest();
-	abstract protected Object createResult(String source) throws MalformedResponseException;
+	abstract protected T createResult(String source) throws MalformedResponseException;
 
 	
 	public RestRequest getRequest() {
@@ -56,13 +56,13 @@ abstract public class RestExchange {
 		String rawResponse = httpClient.execute(req, responseHandler);
 		
 		RestResponseParser rp = new RestResponseParser();
-		mResp = rp.parse(rawResponse);
-		if (mResp.getStatus() == RestResponse.RESPONSE_STATUS_OK) {
+		mResponse = rp.parse(rawResponse);
+		if (mResponse.getStatus() == RestResponse.RESPONSE_STATUS_OK) {
 			KhandroidLog.d("Response is OK");
-			mResult = createResult(mResp.getPayload());
+			mResult = createResult(mResponse.getPayload());
 			mIsOk = true;
 		} else {
-			KhandroidLog.d("Response is ERROR: " + mResp.getStatus());
+			KhandroidLog.d("Response is ERROR: " + mResponse.getStatus());
 			mIsOk = false;
 		}
 			
@@ -86,7 +86,7 @@ abstract public class RestExchange {
 	
 	public int getErrorCode() {
 		if (mExecuted) {
-			return mResp.getResponseCode();
+			return mResponse.getResponseCode();
 		} else {
 			throw new IllegalStateException("Exchange was not performed.");
 		}
@@ -95,18 +95,37 @@ abstract public class RestExchange {
 	
 	public String getErrorMessage() {
 		if (mExecuted) {
-			return mResp.getPayload();
+			return mResponse.getPayload();
 		} else {
 			throw new IllegalStateException("Exchange was not performed.");
 		}
 	}
 	
 	
-	public Object getResult() {
+	public T getResult() {
 		if (isOk()) {
 			return mResult;
 		} else {
 			throw new IllegalStateException("Trying to get result from exchange that ended in error.");			
 		}
 	}
+	
+	
+    public RestResponse getResponse() {
+        return mResponse;
+    }
+    
+
+    public interface CompletedListener<T> {
+        void exchangeCompleted(RestExchange<T> x);
+
+
+        void exchangeCompletedOk(T x);
+
+
+        void exchangeCompletedFail(RestResponse response);
+
+
+        void exchangeCompletedEpicFail();
+    }
 }

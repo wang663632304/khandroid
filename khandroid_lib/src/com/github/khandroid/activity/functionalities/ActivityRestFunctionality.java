@@ -22,6 +22,7 @@ import com.github.khandroid.activity.HostActivity;
 import com.github.khandroid.rest.MalformedResponseException;
 import com.github.khandroid.rest.RestExchange;
 import com.github.khandroid.rest.RestExchangeFailedException;
+import com.github.khandroid.rest.RestResponse;
 
 import khandroid.ext.apache.http.client.ClientProtocolException;
 import khandroid.ext.apache.http.impl.client.DefaultHttpClient;
@@ -54,6 +55,22 @@ abstract public class ActivityRestFunctionality extends ActivityHttpFunctionalit
         }
     }
 
+    
+    public <T> void executeExchange(RestExchange<T> x, RestExchange.CompletedListener<T> listener) {
+        try {
+            executeExchange(x);
+            listener.exchangeCompleted(x);
+            if (x.isOk()) {
+                T result = x.getResult();
+                listener.exchangeCompletedOk(result);
+            } else {
+                listener.exchangeCompletedFail(x.getResponse());
+            }
+        } catch (RestExchangeFailedException e) {
+            listener.exchangeCompletedEpicFail();
+        }
+    }
+    
 
     @Override
     abstract protected DefaultHttpClient createHttpClient();

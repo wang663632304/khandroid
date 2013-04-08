@@ -15,15 +15,13 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.misc;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
-import com.github.khandroid.activity.KatExecutor.IKatExecutorFunctionality.DialogCreator;
-import com.github.khandroid.misc.KhandroidAsyncTask;
-import com.github.khandroid.misc.KhandroidLog;
+import com.github.khandroid.misc.KatExecutor.IKatExecutorFunctionality.DialogCreator;
 
 
 public class KatExecutor {
@@ -157,12 +155,13 @@ public class KatExecutor {
         public ProgressDialog showProgressDialog(KhandroidAsyncTask<?,?,?> task);
         public void dismissProgressDialog();
         
-        public void onTaskCompleted(KhandroidAsyncTask<?, ?, ?> task);
+        
         public <T> void execute(KhandroidAsyncTask<T, ?, ?> task, T... params);
         public AsyncTask.Status getTaskStatus();
         public boolean isExecuting();
         public boolean cancelExecution(boolean mayInterruptIfRunning);
         public void onTaskCancelled();
+        public void onTaskCompleted(KhandroidAsyncTask<?, ?, ?> task);
         
                 
         public interface DialogCreator {

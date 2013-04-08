@@ -22,5 +22,6 @@ import com.github.khandroid.rest.RestExchangeFailedException;
 
 
 public interface RestFunctionality {
-    public void executeExchange(RestExchange x) throws RestExchangeFailedException;
+    <T> void executeExchange(RestExchange<T> x) throws RestExchangeFailedException;
+    <T> void executeExchange(RestExchange<T> x, RestExchange.CompletedListener<T> listener);
 }

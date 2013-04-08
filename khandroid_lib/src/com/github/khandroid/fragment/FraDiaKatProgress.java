@@ -17,10 +17,10 @@
 
 package com.github.khandroid.fragment;
 
-import com.github.khandroid.activity.KatExecutor;
-import com.github.khandroid.activity.KatExecutor.IKatExecutorFunctionality;
-import com.github.khandroid.activity.KatExecutor.IKatExecutorFunctionality.DialogCreator;
+import com.github.khandroid.misc.KatExecutor;
 import com.github.khandroid.misc.KhandroidAsyncTask;
+import com.github.khandroid.misc.KatExecutor.IKatExecutorFunctionality;
+import com.github.khandroid.misc.KatExecutor.IKatExecutorFunctionality.DialogCreator;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;

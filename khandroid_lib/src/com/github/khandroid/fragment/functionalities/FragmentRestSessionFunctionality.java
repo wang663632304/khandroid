@@ -37,8 +37,8 @@ import com.github.khandroid.rest.RestExchange;
 import com.github.khandroid.rest.RestExchangeFailedException;
 
 
-abstract public class FragmentRestFunctionality extends FragmentHttpFunctionality implements RestFunctionality {
-    public FragmentRestFunctionality(HostingAble fragment) {
+abstract public class FragmentRestSessionFunctionality extends FragmentHttpFunctionality implements RestFunctionality {
+    public FragmentRestSessionFunctionality(HostingAble fragment) {
         super((HostFragment) fragment);
     }
 
