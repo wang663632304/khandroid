@@ -62,14 +62,14 @@ public class ActivityKat2ExecutorFunctionality extends ActivityAttachedFunctiona
 
     
     public <T> void execute(KhandroidAsyncTask2<T, ?, ?> task,
-                               T... params
+                             T... params
                            ) {
         execute(task, null, params);
     }
     
     
     public <U> void execute(KhandroidAsyncTask2<?, ?, U> task,
-                               KhandroidAsyncTask2.TaskCompletedListener<U> listener
+                             KhandroidAsyncTask2.TaskCompletedListener<U> listener
                            ) {
         
         mKatExecutor.execute(task);
