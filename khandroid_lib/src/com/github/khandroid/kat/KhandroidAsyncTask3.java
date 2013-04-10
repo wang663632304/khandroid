@@ -1,6 +1,5 @@
 package com.github.khandroid.kat;
 
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -11,141 +10,185 @@ import android.os.AsyncTask;
 
 
 abstract public class KhandroidAsyncTask3<Params, Progress, Result> {
-    private InnerAsyncTask mTask;
-    private Kat3Executor<Params, Progress, Result> mExecutor;
+    private InnerAsyncTask<Params, Progress, Result> mTask;
+    private TaskListener<Progress, Result> mListener;
 
-    
+
     public KhandroidAsyncTask3() {
-        mTask = new InnerAsyncTask(); 
+        mTask = new InnerAsyncTask<Params, Progress, Result>(this);
     }
 
-//    public final AsyncTask<Params, Progress, Result> execute() {
-//        return mTask.execute();
-//    }
+
+    //    public final AsyncTask<Params, Progress, Result> execute() {
+    //        return mTask.execute();
+    //    }
+
+    public final AsyncTask<Params, Progress, Result> execute(TaskListener<Progress, Result> listener,
+                                                             Params... params) {
+        mListener = listener;
+        return execute(params);
+    }
     
-    
-    
-    public final AsyncTask<Params, Progress, Result> execute(Kat3Executor<Params, Progress, Result> executor, Params... params) {
-        attach(executor);
+
+    public final AsyncTask<Params, Progress, Result> execute(Params... params) {
         KhandroidLog.v("Executing KhandroidAsyncTask");
+        mListener = null;
         return mTask.execute(params);
     }
 
 
+
     public void detach() {
         KhandroidLog.v("detach " + this);
-        mExecutor = null;
+        mListener = null;
     }
 
 
-    public void attach(Kat3Executor<Params, Progress, Result> executor) {
-        if (executor != null) {
+    public void attach(TaskListener<Progress, Result> listener) {
+        if (listener != null) {
             KhandroidLog.v("attach " + this);
-            this.mExecutor = executor;
+            this.mListener = listener;
         } else {
             throw new IllegalArgumentException("executor == null");
         }
     }
-    
-    
+
+
     public AsyncTask.Status getStatus() {
         if (mTask != null) {
-            return mTask.getStatus();    
+            return mTask.getStatus();
         } else {
             return null;
         }
     }
-    
-    
+
+
     public final boolean isCancelled() {
         return mTask.isCancelled();
     }
-    
-    
+
+
     public final boolean cancel(boolean mayInterruptIfRunning) {
         return mTask.cancel(mayInterruptIfRunning);
     }
-    
-    
-    public final Result get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+
+
+    public final Result get(long timeout, TimeUnit unit) throws InterruptedException,
+                                                        ExecutionException,
+                                                        TimeoutException {
         return mTask.get(timeout, unit);
     }
-    
-    
+
+
     public final Result get() throws InterruptedException, ExecutionException {
         return mTask.get();
     }
-                                 
-    
+
+
+    protected void onPostExecuteCaller(Result result) {
+        onPostExecute(result);
+        if (mListener != null) {
+            mListener.onTaskCompleted(result);
+        }
+    }
+
+
     protected void onPostExecute(Result result) {
         // intentionally left empty
     }
 
-    
+
     protected void onPreExecute() {
         // intentionally left empty
     }
+
     
-    
+    protected void onProgressUpdateCaler(Progress... values) {
+        onProgressUpdate(values);
+        if (mListener != null) {
+            mListener.onTaskPublishProgress(values);
+        }
+    }
+
     protected void onProgressUpdate(Progress... values) {
         // intentionally left empty
     }
-    
-    
+
+
+    protected void onCancelledCaller() {
+        onCancelled();
+        if (mListener != null) {
+            mListener.onTaskCancelled();
+        }
+    }
+
+
     protected void onCancelled() {
         // intentionally left empty
     }
-    
-    
+
+
     protected final void publishProgress(Progress... values) {
         mTask.publishProgressInner(values);
     }
-    
-    
-    abstract protected Result doInBackground();
-    
-    
-    private class InnerAsyncTask extends AsyncTask<Params, Progress, Result> {
+
+
+    abstract protected Result doInBackground(Params... params);
+
+    private static class InnerAsyncTask<T, U, V> extends AsyncTask<T, U, V> {
+        private KhandroidAsyncTask3<T, U, V> mWrapper;
+
+
+        public InnerAsyncTask(KhandroidAsyncTask3<T, U, V> wrapper) {
+            super();
+            mWrapper = wrapper;
+        }
+
+
         @Override
         protected void onPreExecute() {
-            KhandroidAsyncTask3.this.onPreExecute();
+            mWrapper.onPreExecute();
         }
 
 
         @Override
-        protected void onPostExecute(Result result) {
+        protected void onPostExecute(V result) {
             KhandroidLog.v("onPostExecute");
-            KhandroidAsyncTask3.this.onPostExecute(result);
-            mExecutor.onTaskCompleted(result);
+            mWrapper.onPostExecuteCaller(result);
         }
 
 
         @Override
-        protected void onProgressUpdate(Progress... values) {
-            KhandroidAsyncTask3.this.onProgressUpdate(values);
+        protected void onProgressUpdate(U... values) {
+            mWrapper.onProgressUpdateCaler(values);
         }
 
 
         @Override
         protected void onCancelled() {
-            KhandroidAsyncTask3.this.onCancelled();
-            mExecutor.onTaskCancelled();
+            mWrapper.onCancelledCaller();
         }
 
 
         @Override
-        protected Result doInBackground(Params... params) {
-            return KhandroidAsyncTask3.this.doInBackground();
+        protected V doInBackground(T... params) {
+            return (V) mWrapper.doInBackground(params);
         }
 
 
-        protected void publishProgressInner(Progress... values) {
+        protected void publishProgressInner(U... values) {
             super.publishProgress(values);
         }
     }
 
 
-    public Kat3Executor<Params, Progress, Result> getExecutor() {
-        return mExecutor;
+    public interface TaskListener<Progress, Result> {
+        void onTaskPublishProgress(Progress... progress);
+
+
+        void onTaskCancelled();
+
+
+        void onTaskCompleted(Result result);
     }
 }

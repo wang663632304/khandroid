@@ -12,15 +12,20 @@ public interface Kat3Executor<T, U, V> {
                         T... params
             );
 
+    public void execute(KhandroidAsyncTask3<T, U, V> task,
+                        TaskExecutorListener<U, V> listener
+            );
     
-    public void onTaskCompleted(V result);
-    public void onTaskCancelled();
-    public void onTaskProgressUpdate(U... progress);
-    
+    boolean cancelTask(boolean mayInterruptIfRunning);
+    public boolean isExecuting();
     
     public interface TaskExecutorListener<Progress, Result> {
         void onTaskPublishProgress(Progress... progress);
         void onTaskCancelled();
         void onTaskCompleted(Result result);
+        void onContinueWithTask();
+        void onTaskHasBeenCompleted(Result result);
+        void onTaskHasBeenCancelled();
+        
     }
 }

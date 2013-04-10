@@ -16,75 +16,148 @@
 
 package com.github.khandroid.kat;
 
+import java.util.concurrent.ExecutionException;
+
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.github.khandroid.fragment.FragmentAttachedFunctionality;
 import com.github.khandroid.fragment.HostFragment;
-import com.github.khandroid.kat.Kat3Executor.TaskExecutorListener;
+import com.github.khandroid.kat.KhandroidAsyncTask3.TaskListener;
 
 
 public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttachedFunctionality
-        implements Kat3Executor<T, U, V> {
-    private KhandroidAsyncTask3<T, U, V> mTask;
-    private TaskExecutorListener<U, V> mListener;
+        implements Kat3Executor<T, U, V>, TaskListener<U, V> {
+    private TaskExecutorListener<U, V> mExecutorListener;
     private final String mTaskFragmentTag;
+    private TaskFragment mTaskFragment;
 
 
     public FragmentKat3ExecutorFunctionality(HostFragment fragment) {
         super(fragment);
         mTaskFragmentTag = fragment.getClass().getSimpleName() + this; // host class name + reference of current object
     }
-    
+
+
     public FragmentKat3ExecutorFunctionality(HostFragment fragment, String customTaskTag) {
         super(fragment);
         mTaskFragmentTag = customTaskTag;
     }
 
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void onTaskCompleted(V result) {
-        mTask.detach();
-        mTask = null;
-        if (mListener != null) {
-            mListener.onTaskCompleted(result);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        mTaskFragment = (TaskFragment) getFragment().getFragmentManager().findFragmentByTag(mTaskFragmentTag);
+        if (mTaskFragment != null) {
+            mTaskFragment.attach(this);
+
+            AsyncTask.Status status = mTaskFragment.getTaskStatus();
+            if (status == AsyncTask.Status.RUNNING) {
+                onContinueWithTask();
+            } else if (status == AsyncTask.Status.FINISHED) {
+                if (!mTaskFragment.isTaskCancelled()) {
+                    onTaskHasBeenCompleted(mTaskFragment.getTaskResult());
+                } else {
+                    onTaskHasBeenCancelled();
+                }
+            }
         }
     }
-
-
+    
+    
     @Override
-    public void onTaskProgressUpdate(U... progress) {
-        if (mListener != null) {
-            mListener.onTaskPublishProgress(progress);
+    public void onDestroy() {
+        super.onDestroy();
+        
+        if (getFragment().getActivity().isFinishing()) {
+            mTaskFragment.cancelTask(true);
+        }
+
+        mTaskFragment.detach();
+    }
+
+    
+    protected void onContinueWithTask() {
+        if (mExecutorListener != null) {
+            mExecutorListener.onContinueWithTask();
+        }
+    }
+    
+    private void closeTaskFragment() {
+        if (mTaskFragment != null) {
+            getFragment().getFragmentManager().beginTransaction().remove(mTaskFragment).commit();
+            mTaskFragment = null;
+        }
+    }
+    
+    
+    @Override
+    public void onTaskCompleted(V result) {
+        closeTaskFragment();
+        
+        if (mExecutorListener != null) {
+            mExecutorListener.onTaskCompleted(result);
         }
     }
 
 
     @Override
     public void onTaskCancelled() {
-        if (mListener != null) {
-            mListener.onTaskCancelled();
+        closeTaskFragment();
+        
+        if (mExecutorListener != null) {
+            mExecutorListener.onTaskCancelled();
+        }
+    }
+    
+    
+    private void onTaskHasBeenCancelled() {
+        closeTaskFragment();
+        
+        if (mExecutorListener != null) {
+            mExecutorListener.onTaskHasBeenCancelled();
         }
     }
 
+
+    private void onTaskHasBeenCompleted(V taskResult) {
+        closeTaskFragment();
+        
+        if (mExecutorListener != null) {
+            mExecutorListener.onTaskHasBeenCompleted(taskResult);
+        }
+    }
+
+    @Override
+    public void onTaskPublishProgress(U... progress) {
+        if (mExecutorListener != null) {
+            mExecutorListener.onTaskPublishProgress(progress);
+        }
+    }
     
+    
+    
+    
+
     @Override
     public void execute(KhandroidAsyncTask3<T, U, V> task,
                         TaskExecutorListener<U, V> listener,
                         T... params) {
-        
-        mListener = listener;
+        mExecutorListener = listener;
         execute(task, params);
     }
 
 
     @Override
     public void execute(KhandroidAsyncTask3<T, U, V> task, T... params) {
-        if (mTask != null) {
-            mTask = task;
-            mTask.execute(this, params);
-        } else {
-            throw new IllegalStateException("Cannot execute. There is previus task.");
-        }
+        TaskFragment fragment = new TaskFragment(task, params);
+        fragment.setTargetFragment(getFragment(), 0);
+        fragment.attach(this);
+        getFragment().getFragmentManager().beginTransaction().add(fragment, mTaskFragmentTag).commit();
     }
 
 
@@ -93,22 +166,42 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
     public void execute(KhandroidAsyncTask3<T, U, V> task,
                         TaskExecutorListener<U, V> listener) {
 
-        mListener = listener;
-        mTask.execute(this, (T) null);
+        mExecutorListener = listener;
+        execute(task);
     }
+    
 
-
-    private class TaskFragment extends Fragment implements Kat3Executor<T, U, V> {
+    private class TaskFragment extends Fragment implements TaskListener<U, V> {
         private KhandroidAsyncTask3<T, U, V> mTask;
+        private TaskListener<U, V> mTaskListener;
+
 
         public TaskFragment(KhandroidAsyncTask3<T, U, V> task, T... params) {
             super();
             setRetainInstance(true);
             mTask = task;
-            mTask.execute(this, params);
+            mTask.execute(params);
         }
-        
-        
+
+
+        public void attach(FragmentKat3ExecutorFunctionality<T, U, V> executorFunc) {
+            if (executorFunc != null) {
+                if (mTaskListener == null && mTaskListener != executorFunc) {
+                    mTaskListener = executorFunc;
+                } else {
+                    throw new IllegalStateException("There is another executor functionality already attached");
+                }
+            } else {
+                throw new IllegalArgumentException("executorFunc is null");
+            }
+        }
+
+
+        public void detach() {
+            mTaskListener = null;
+        }
+
+
         @Override
         public void onDestroy() {
             super.onDestroy();
@@ -116,28 +209,87 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
         }
 
 
- 
-
-
         @Override
-        public void onTaskCompleted(V result) {
-            // TODO Auto-generated method stub
-            
+        public void onTaskPublishProgress(U... progress) {
+            if (mTaskListener == null) { 
+                mTaskListener.onTaskPublishProgress(progress);
+            }
+                
         }
 
 
         @Override
         public void onTaskCancelled() {
-            // TODO Auto-generated method stub
-            
+            if (mTaskListener == null) {
+                mTaskListener.onTaskCancelled();
+            }
         }
 
 
         @Override
-        public void onTaskProgressUpdate(U... progress) {
-            // TODO Auto-generated method stub
+        public void onTaskCompleted(V result) {
+            if (mTaskListener == null) {
+                mTaskListener.onTaskCompleted(result);
+            }
+        }
+        
+        
+        public AsyncTask.Status getTaskStatus() {
+            return mTask.getStatus();
+        }
+        
+        public V getTaskResult() {
+            V ret = null;
             
+            if (mTask.getStatus() == AsyncTask.Status.FINISHED) {
+                try {
+                    ret = mTask.get();
+                } catch (InterruptedException e) {
+                    // Cannot happen. We check if it is finished
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    // Cannot happen. We check if it is finished
+                    e.printStackTrace();
+                }
+            } else {
+                throw new IllegalStateException("Task is not finished.");
+            }
+            
+            return ret;
+        }
+        
+        
+        public boolean isTaskCancelled() {
+            return mTask.isCancelled();
+        }
+        
+        
+        public boolean cancelTask(boolean mayInterruptIfRunning) {
+            return mTask.cancel(mayInterruptIfRunning);
         }
     }
 
+
+    @Override
+    public boolean cancelTask(boolean mayInterruptIfRunning) {
+        boolean ret = false;
+        
+        if (mTaskFragment != null) {
+            ret = mTaskFragment.cancelTask(mayInterruptIfRunning);
+        }
+        
+        return ret;
+    }
+
+
+    @Override
+    public boolean isExecuting() {
+        boolean ret = false;
+        
+        if (mTaskFragment != null) {
+            ret = true;
+        }
+        
+        return ret;
+    }
 }
