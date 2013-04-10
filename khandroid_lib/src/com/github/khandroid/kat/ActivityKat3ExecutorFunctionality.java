@@ -1,6 +1,5 @@
 package com.github.khandroid.kat;
 
-
 import java.util.concurrent.ExecutionException;
 
 import android.os.AsyncTask;
@@ -11,13 +10,19 @@ import com.github.khandroid.activity.HostActivity;
 import com.github.khandroid.misc.KhandroidLog;
 
 
-public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttachedFunctionality implements Kat3Executor<T, U, V> {
+public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttachedFunctionality
+        implements Kat3Executor<T, U, V> {
     private KhandroidAsyncTask3<T, U, V> mTask;
     TaskExecutorListener<U, V> mListener;
 
 
     public ActivityKat3ExecutorFunctionality(HostActivity activity) {
         super(activity);
+    }
+
+
+    protected void onContinueWithTask() {
+        // empty
     }
 
 
@@ -28,11 +33,11 @@ public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttached
         KhandroidLog.v("onCreate");
         Object task = getActivity().getLastNonConfigurationInstance();
         KhandroidLog.v("Task: " + task);
-                
+
         if (task != null && task instanceof KhandroidAsyncTask3) {
             KhandroidAsyncTask3<T, U, V> mTask = (KhandroidAsyncTask3<T, U, V>) task;
             mTask.attach(this);
-            
+
             if (mTask.getStatus() == AsyncTask.Status.RUNNING) {
                 onContinueWithTask();
             } else if (mTask.getStatus() == AsyncTask.Status.FINISHED) {
@@ -48,27 +53,27 @@ public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttached
             }
         }
     }
-    
-    
+
+
     public Object onRetainNonConfigurationInstance() {
         Object ret;
-        
+
         if (mTask != null) {
             mTask.detach();
             ret = mTask;
         } else {
             ret = null;
         }
-        
+
         return ret;
     }
-    
-    
+
+
     @Override
     public void execute(KhandroidAsyncTask3<T, U, V> task,
                         TaskExecutorListener<U, V> listener,
                         T... params) {
-        
+
         mListener = listener;
         execute(task, params);
     }
@@ -78,16 +83,6 @@ public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttached
     public void execute(KhandroidAsyncTask3<T, U, V> task, T... params) {
         mTask = task;
         mTask.execute(this, params);
-    }
-
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void execute(KhandroidAsyncTask3<T, U, V> task,
-                        TaskExecutorListener<U, V> listener) {
-
-        mListener = listener;
-        mTask.execute(this, (T) null);
     }
 
 
@@ -115,9 +110,17 @@ public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttached
             mListener.onTaskCancelled();
         }
     }
-    
-    
-    protected void onContinueWithTask() {
-        // empty
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mTask != null) {
+            if (getActivity().isFinishing()) {
+                mTask.cancel(true);
+            }
+
+            mTask.detach();
+        }
     }
 }

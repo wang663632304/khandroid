@@ -14,6 +14,7 @@ abstract public class KhandroidAsyncTask3<Params, Progress, Result> {
     private InnerAsyncTask mTask;
     private Kat3Executor<Params, Progress, Result> mExecutor;
 
+    
     public KhandroidAsyncTask3() {
         mTask = new InnerAsyncTask(); 
     }
@@ -22,11 +23,14 @@ abstract public class KhandroidAsyncTask3<Params, Progress, Result> {
 //        return mTask.execute();
 //    }
     
+    
+    
     public final AsyncTask<Params, Progress, Result> execute(Kat3Executor<Params, Progress, Result> executor, Params... params) {
         attach(executor);
         KhandroidLog.v("Executing KhandroidAsyncTask");
         return mTask.execute(params);
     }
+
 
     public void detach() {
         KhandroidLog.v("detach " + this);
@@ -98,7 +102,7 @@ abstract public class KhandroidAsyncTask3<Params, Progress, Result> {
     }
     
     
-    abstract protected Result doInBackground(Params... params);
+    abstract protected Result doInBackground();
     
     
     private class InnerAsyncTask extends AsyncTask<Params, Progress, Result> {
@@ -131,7 +135,7 @@ abstract public class KhandroidAsyncTask3<Params, Progress, Result> {
 
         @Override
         protected Result doInBackground(Params... params) {
-            return KhandroidAsyncTask3.this.doInBackground(params);
+            return KhandroidAsyncTask3.this.doInBackground();
         }
 
 

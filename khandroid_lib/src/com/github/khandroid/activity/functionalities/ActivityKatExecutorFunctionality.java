@@ -24,8 +24,6 @@ import com.github.khandroid.misc.KatExecutor;
 import com.github.khandroid.misc.KhandroidAsyncTask;
 import com.github.khandroid.misc.KhandroidLog;
 import com.github.khandroid.misc.KatExecutor.IKatExecutorFunctionality;
-import com.github.khandroid.misc.KatExecutor.IKatExecutorFunctionality.DialogCreator;
-
 import android.app.ProgressDialog;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;

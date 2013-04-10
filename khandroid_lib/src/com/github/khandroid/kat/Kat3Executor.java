@@ -12,11 +12,6 @@ public interface Kat3Executor<T, U, V> {
                         T... params
             );
 
-
-    public void execute(KhandroidAsyncTask3<T, U, V> task,
-                        TaskExecutorListener<U, V> listener
-            );
-    
     
     public void onTaskCompleted(V result);
     public void onTaskCancelled();
