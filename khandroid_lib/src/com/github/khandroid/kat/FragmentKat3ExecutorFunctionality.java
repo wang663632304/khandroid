@@ -50,8 +50,9 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        mTaskFragment = (TaskFragment) getFragment().getFragmentManager().findFragmentByTag(mTaskFragmentTag);
+
+        mTaskFragment = (TaskFragment) getFragment().getFragmentManager()
+                .findFragmentByTag(mTaskFragmentTag);
         if (mTaskFragment != null) {
             mTaskFragment.attach(this);
 
@@ -67,12 +68,12 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
             }
         }
     }
-    
-    
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        
+
         if (getFragment().getActivity().isFinishing()) {
             mTaskFragment.cancelTask(true);
         }
@@ -80,25 +81,26 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
         mTaskFragment.detach();
     }
 
-    
+
     protected void onContinueWithTask() {
         if (mExecutorListener != null) {
             mExecutorListener.onContinueWithTask();
         }
     }
-    
+
+
     private void closeTaskFragment() {
         if (mTaskFragment != null) {
             getFragment().getFragmentManager().beginTransaction().remove(mTaskFragment).commit();
             mTaskFragment = null;
         }
     }
-    
-    
+
+
     @Override
     public void onTaskCompleted(V result) {
         closeTaskFragment();
-        
+
         if (mExecutorListener != null) {
             mExecutorListener.onTaskCompleted(result);
         }
@@ -108,16 +110,16 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
     @Override
     public void onTaskCancelled() {
         closeTaskFragment();
-        
+
         if (mExecutorListener != null) {
             mExecutorListener.onTaskCancelled();
         }
     }
-    
-    
+
+
     private void onTaskHasBeenCancelled() {
         closeTaskFragment();
-        
+
         if (mExecutorListener != null) {
             mExecutorListener.onTaskHasBeenCancelled();
         }
@@ -126,11 +128,12 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
 
     private void onTaskHasBeenCompleted(V taskResult) {
         closeTaskFragment();
-        
+
         if (mExecutorListener != null) {
             mExecutorListener.onTaskHasBeenCompleted(taskResult);
         }
     }
+
 
     @Override
     public void onTaskPublishProgress(U... progress) {
@@ -138,10 +141,7 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
             mExecutorListener.onTaskPublishProgress(progress);
         }
     }
-    
-    
-    
-    
+
 
     @Override
     public void execute(KhandroidAsyncTask3<T, U, V> task,
@@ -157,7 +157,8 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
         TaskFragment fragment = new TaskFragment(task, params);
         fragment.setTargetFragment(getFragment(), 0);
         fragment.attach(this);
-        getFragment().getFragmentManager().beginTransaction().add(fragment, mTaskFragmentTag).commit();
+        getFragment().getFragmentManager().beginTransaction().add(fragment, mTaskFragmentTag)
+                .commit();
     }
 
 
@@ -169,7 +170,6 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
         mExecutorListener = listener;
         execute(task);
     }
-    
 
     private class TaskFragment extends Fragment implements TaskListener<U, V> {
         private KhandroidAsyncTask3<T, U, V> mTask;
@@ -211,10 +211,10 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
 
         @Override
         public void onTaskPublishProgress(U... progress) {
-            if (mTaskListener == null) { 
+            if (mTaskListener == null) {
                 mTaskListener.onTaskPublishProgress(progress);
             }
-                
+
         }
 
 
@@ -232,15 +232,16 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
                 mTaskListener.onTaskCompleted(result);
             }
         }
-        
-        
+
+
         public AsyncTask.Status getTaskStatus() {
             return mTask.getStatus();
         }
-        
+
+
         public V getTaskResult() {
             V ret = null;
-            
+
             if (mTask.getStatus() == AsyncTask.Status.FINISHED) {
                 try {
                     ret = mTask.get();
@@ -254,16 +255,16 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
             } else {
                 throw new IllegalStateException("Task is not finished.");
             }
-            
+
             return ret;
         }
-        
-        
+
+
         public boolean isTaskCancelled() {
             return mTask.isCancelled();
         }
-        
-        
+
+
         public boolean cancelTask(boolean mayInterruptIfRunning) {
             return mTask.cancel(mayInterruptIfRunning);
         }
@@ -273,11 +274,11 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
     @Override
     public boolean cancelTask(boolean mayInterruptIfRunning) {
         boolean ret = false;
-        
+
         if (mTaskFragment != null) {
             ret = mTaskFragment.cancelTask(mayInterruptIfRunning);
         }
-        
+
         return ret;
     }
 
@@ -285,11 +286,11 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
     @Override
     public boolean isExecuting() {
         boolean ret = false;
-        
+
         if (mTaskFragment != null) {
             ret = true;
         }
-        
+
         return ret;
     }
 }
