@@ -32,7 +32,6 @@ abstract public class KhandroidAsyncTask3<Params, Progress, Result> {
 
     public final AsyncTask<Params, Progress, Result> execute(Params... params) {
         KhandroidLog.v("Executing KhandroidAsyncTask");
-        mListener = null;
         return mTask.execute(params);
     }
 

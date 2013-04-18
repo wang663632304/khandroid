@@ -22,30 +22,36 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import com.github.khandroid.fragment.FragmentAttachable;
 import com.github.khandroid.fragment.FragmentAttachedFunctionality;
 import com.github.khandroid.fragment.HostFragment;
 import com.github.khandroid.kat.KhandroidAsyncTask3.TaskListener;
+import com.github.khandroid.misc.KhandroidLog;
 
 
 public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttachedFunctionality
         implements Kat3Executor<T, U, V>, TaskListener<U, V> {
-    private TaskExecutorListener<U, V> mExecutorListener;
+    private final TaskExecutorListener<U, V> mExecutorListener;
     private final String mTaskFragmentTag;
     private TaskFragment mTaskFragment;
 
 
-    public FragmentKat3ExecutorFunctionality(HostFragment fragment) {
+    public <KatHostFragment extends HostFragment & FragmentKat3ExecutorFunctionality.HostingAble<U, V>> 
+            FragmentKat3ExecutorFunctionality(KatHostFragment fragment) {
         super(fragment);
-        mTaskFragmentTag = fragment.getClass().getSimpleName() + this; // host class name + reference of current object
+        mTaskFragmentTag = fragment.getClass().getSimpleName(); 
+        mExecutorListener = fragment.getKatExecutorListener();
     }
 
 
-    public FragmentKat3ExecutorFunctionality(HostFragment fragment, String customTaskTag) {
+    public <KatHostFragment extends HostFragment & FragmentKat3ExecutorFunctionality.HostingAble<U, V>> 
+            FragmentKat3ExecutorFunctionality(KatHostFragment fragment, String customTaskTag) {
         super(fragment);
         mTaskFragmentTag = customTaskTag;
+        mExecutorListener = fragment.getKatExecutorListener();
     }
-
-
+    
+    
     @SuppressWarnings("unchecked")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,7 +59,9 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
 
         mTaskFragment = (TaskFragment) getFragment().getFragmentManager()
                 .findFragmentByTag(mTaskFragmentTag);
+
         if (mTaskFragment != null) {
+            KhandroidLog.d("Found previous TaskFragment");
             mTaskFragment.attach(this);
 
             AsyncTask.Status status = mTaskFragment.getTaskStatus();
@@ -74,11 +82,13 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
     public void onDestroy() {
         super.onDestroy();
 
-        if (getFragment().getActivity().isFinishing()) {
-            mTaskFragment.cancelTask(true);
-        }
+        if (mTaskFragment != null) {
+            if (getFragment().getActivity().isFinishing()) {
+                mTaskFragment.cancelTask(true);
+            }
 
-        mTaskFragment.detach();
+            mTaskFragment.detach();
+        }
     }
 
 
@@ -91,7 +101,7 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
 
     private void closeTaskFragment() {
         if (mTaskFragment != null) {
-            getFragment().getFragmentManager().beginTransaction().remove(mTaskFragment).commit();
+            getFragment().getFragmentManager().beginTransaction().remove(mTaskFragment).commitAllowingStateLoss();
             mTaskFragment = null;
         }
     }
@@ -99,6 +109,7 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
 
     @Override
     public void onTaskCompleted(V result) {
+        KhandroidLog.d("About to close task fragment");
         closeTaskFragment();
 
         if (mExecutorListener != null) {
@@ -144,32 +155,15 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
 
 
     @Override
-    public void execute(KhandroidAsyncTask3<T, U, V> task,
-                        TaskExecutorListener<U, V> listener,
-                        T... params) {
-        mExecutorListener = listener;
-        execute(task, params);
-    }
-
-
-    @Override
     public void execute(KhandroidAsyncTask3<T, U, V> task, T... params) {
-        TaskFragment fragment = new TaskFragment(task, params);
-        fragment.setTargetFragment(getFragment(), 0);
-        fragment.attach(this);
-        getFragment().getFragmentManager().beginTransaction().add(fragment, mTaskFragmentTag)
+        mTaskFragment = new TaskFragment(task, params);
+        mTaskFragment.setTargetFragment(getFragment(), 0);
+        mTaskFragment.attach(this);
+        getFragment().getFragmentManager().beginTransaction().add(mTaskFragment, mTaskFragmentTag)
                 .commit();
     }
 
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public void execute(KhandroidAsyncTask3<T, U, V> task,
-                        TaskExecutorListener<U, V> listener) {
-
-        mExecutorListener = listener;
-        execute(task);
-    }
 
     private class TaskFragment extends Fragment implements TaskListener<U, V> {
         private KhandroidAsyncTask3<T, U, V> mTask;
@@ -180,13 +174,15 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
             super();
             setRetainInstance(true);
             mTask = task;
-            mTask.execute(params);
+            mTask.execute(this, params);
+            KhandroidLog.d("Creating TaskFragment");
         }
 
 
         public void attach(FragmentKat3ExecutorFunctionality<T, U, V> executorFunc) {
             if (executorFunc != null) {
                 if (mTaskListener == null && mTaskListener != executorFunc) {
+                    KhandroidLog.d("Attaching TaskFragment to executor");
                     mTaskListener = executorFunc;
                 } else {
                     throw new IllegalStateException("There is another executor functionality already attached");
@@ -198,6 +194,7 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
 
 
         public void detach() {
+            KhandroidLog.d("Detaching TaskFragment");
             mTaskListener = null;
         }
 
@@ -206,12 +203,13 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
         public void onDestroy() {
             super.onDestroy();
             mTask.cancel(true);
+            KhandroidLog.d("Destroying TaskFragment");
         }
 
 
         @Override
         public void onTaskPublishProgress(U... progress) {
-            if (mTaskListener == null) {
+            if (mTaskListener != null) {
                 mTaskListener.onTaskPublishProgress(progress);
             }
 
@@ -220,7 +218,7 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
 
         @Override
         public void onTaskCancelled() {
-            if (mTaskListener == null) {
+            if (mTaskListener != null) {
                 mTaskListener.onTaskCancelled();
             }
         }
@@ -228,7 +226,7 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
 
         @Override
         public void onTaskCompleted(V result) {
-            if (mTaskListener == null) {
+            if (mTaskListener != null) {
                 mTaskListener.onTaskCompleted(result);
             }
         }
@@ -292,5 +290,9 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
         }
 
         return ret;
+    }
+
+    public interface HostingAble<U, V> extends FragmentAttachable.HostingAble {
+        TaskExecutorListener<U, V> getKatExecutorListener();
     }
 }

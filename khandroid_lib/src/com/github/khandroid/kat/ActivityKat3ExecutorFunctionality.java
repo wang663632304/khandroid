@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.github.khandroid.activity.ActivityAttachedFunctionality;
 import com.github.khandroid.activity.HostActivity;
+import com.github.khandroid.fragment.FragmentAttachable;
 import com.github.khandroid.kat.KhandroidAsyncTask3.TaskListener;
 import com.github.khandroid.misc.KhandroidLog;
 
@@ -16,11 +17,12 @@ public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttached
     private KhandroidAsyncTask3<T, U, V> mTask;
     private TaskExecutorListener<U, V> mListener;
 
-// TODO:
-// Add int CODE in constructor in order to be able easy to distinguish different executors
-// remove mListener and add interface HostingAble with it's methods (or (even better) require method getKatExecutorListener()).    
-    public ActivityKat3ExecutorFunctionality(HostActivity activity) {
+
+    public <KatHostActivity extends HostActivity & ActivityKat3ExecutorFunctionality.HostingAble<U, V>> 
+            ActivityKat3ExecutorFunctionality(KatHostActivity activity) {
         super(activity);
+        
+        mListener = activity.getKatExecutorListener();
     }
 
 
@@ -79,31 +81,11 @@ public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttached
 
 
     @Override
-    public void execute(KhandroidAsyncTask3<T, U, V> task,
-                        TaskExecutorListener<U, V> listener,
-                        T... params) {
-
-        mListener = listener;
-        execute(task, params);
-    }
-
-
-    @Override
     public void execute(KhandroidAsyncTask3<T, U, V> task, T... params) {
         mTask = task;
         mTask.execute(this, params);
     }
     
-    
-    @SuppressWarnings("unchecked")
-    @Override
-    public void execute(KhandroidAsyncTask3<T, U, V> task,
-                        com.github.khandroid.kat.Kat3Executor.TaskExecutorListener<U, V> listener) {
-
-        mTask = task;
-        mTask.execute(this);
-    }
-
 
     @Override
     public void onTaskCompleted(V result) {
@@ -170,7 +152,7 @@ public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttached
             ret = mTask.cancel(mayInterruptIfRunning);
         }
         
-        return true;
+        return ret;
     }
 
 
@@ -184,6 +166,9 @@ public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttached
             
         return ret;
     }
+
     
-    
+    public interface HostingAble<U, V> extends FragmentAttachable.HostingAble {
+        TaskExecutorListener<U, V> getKatExecutorListener();
+    }
 }

@@ -21,8 +21,8 @@ import android.os.Bundle;
 
 
 public interface FragmentAttachable {
-    void FragmentLifeCycleEvent(int type, Bundle b);
-
+    void fragmentLifeCycleEvent(int type, Bundle b);
+    
     public interface HostingAble {
         
     }

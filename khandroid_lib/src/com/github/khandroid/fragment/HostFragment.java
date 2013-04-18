@@ -25,7 +25,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 
-public class HostFragment extends Fragment {
+public class HostFragment extends Fragment implements FragmentAttachable.HostingAble {
     public static final int EVENT_ON_ATTACH = 0;
     public static final int EVENT_ON_CREATE = 1;
     public static final int EVENT_ON_ACTIVITY_CREATED = 2;
@@ -60,7 +60,7 @@ public class HostFragment extends Fragment {
         super.onAttach(activity);
 
         for (FragmentAttachable a : mAttachments) {
-            a.FragmentLifeCycleEvent(EVENT_ON_ATTACH, null);
+            a.fragmentLifeCycleEvent(EVENT_ON_ATTACH, null);
         }
     }
     
@@ -70,7 +70,7 @@ public class HostFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         for (FragmentAttachable a : mAttachments) {
-            a.FragmentLifeCycleEvent(EVENT_ON_CREATE, savedInstanceState);
+            a.fragmentLifeCycleEvent(EVENT_ON_CREATE, savedInstanceState);
         }
     }
     
@@ -80,7 +80,7 @@ public class HostFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         for (FragmentAttachable a : mAttachments) {
-            a.FragmentLifeCycleEvent(EVENT_ON_ACTIVITY_CREATED, savedInstanceState);
+            a.fragmentLifeCycleEvent(EVENT_ON_ACTIVITY_CREATED, savedInstanceState);
         }
     }
     
@@ -90,7 +90,7 @@ public class HostFragment extends Fragment {
         super.onStart();
 
         for (FragmentAttachable a : mAttachments) {
-            a.FragmentLifeCycleEvent(EVENT_ON_START, null);
+            a.fragmentLifeCycleEvent(EVENT_ON_START, null);
         }
     }
     
@@ -100,7 +100,7 @@ public class HostFragment extends Fragment {
         super.onResume();
 
         for (FragmentAttachable a : mAttachments) {
-            a.FragmentLifeCycleEvent(EVENT_ON_RESUME, null);
+            a.fragmentLifeCycleEvent(EVENT_ON_RESUME, null);
         }
     }
     
@@ -110,7 +110,7 @@ public class HostFragment extends Fragment {
         super.onPause();
 
         for (FragmentAttachable a : mAttachments) {
-            a.FragmentLifeCycleEvent(EVENT_ON_PAUSE, null);
+            a.fragmentLifeCycleEvent(EVENT_ON_PAUSE, null);
         }
     }
     
@@ -120,7 +120,7 @@ public class HostFragment extends Fragment {
         super.onStop();
 
         for (FragmentAttachable a : mAttachments) {
-            a.FragmentLifeCycleEvent(EVENT_ON_STOP, null);
+            a.fragmentLifeCycleEvent(EVENT_ON_STOP, null);
         }  
     }
     
@@ -130,7 +130,7 @@ public class HostFragment extends Fragment {
         super.onDestroy();
 
         for (FragmentAttachable a : mAttachments) {
-            a.FragmentLifeCycleEvent(EVENT_ON_DESTROY, null);
+            a.fragmentLifeCycleEvent(EVENT_ON_DESTROY, null);
         }  
     }
     
@@ -140,7 +140,7 @@ public class HostFragment extends Fragment {
         super.onDetach();
 
         for (FragmentAttachable a : mAttachments) {
-            a.FragmentLifeCycleEvent(EVENT_ON_DETACH, null);
+            a.fragmentLifeCycleEvent(EVENT_ON_DETACH, null);
         }  
     }
     
@@ -150,7 +150,7 @@ public class HostFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         for (FragmentAttachable a : mAttachments) {
-            a.FragmentLifeCycleEvent(EVENT_ON_SAVE_INSTANCE_STATE, outState);
+            a.fragmentLifeCycleEvent(EVENT_ON_SAVE_INSTANCE_STATE, outState);
         }
     }
 

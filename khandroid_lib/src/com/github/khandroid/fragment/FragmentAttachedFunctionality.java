@@ -18,7 +18,6 @@
 package com.github.khandroid.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 import com.github.khandroid.misc.SuperNotCalledException;
 
@@ -35,7 +34,7 @@ public class FragmentAttachedFunctionality implements FragmentAttachable {
     private boolean mCalled9;
     private boolean mCalled10;
     
-    private HostFragment mFragment;  
+    private final HostFragment mFragment;  
     
     
     public FragmentAttachedFunctionality(HostFragment fragment) {
@@ -45,7 +44,7 @@ public class FragmentAttachedFunctionality implements FragmentAttachable {
 
     
     @Override
-    public void FragmentLifeCycleEvent(int type, Bundle b) {
+    public void fragmentLifeCycleEvent(int type, Bundle b) {
         switch (type) {
             case HostFragment.EVENT_ON_ATTACH:
                 mCalled1 = false;
@@ -175,7 +174,7 @@ public class FragmentAttachedFunctionality implements FragmentAttachable {
     }
     
     
-    public Fragment getFragment() {
+    public HostFragment getFragment() {
         return mFragment;
     }
 }
