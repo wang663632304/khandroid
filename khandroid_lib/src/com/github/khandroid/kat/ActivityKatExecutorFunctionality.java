@@ -6,18 +6,18 @@ import android.os.Bundle;
 import com.github.khandroid.activity.ActivityAttachedFunctionality;
 import com.github.khandroid.activity.HostActivity;
 import com.github.khandroid.fragment.FragmentAttachable;
-import com.github.khandroid.kat.KhandroidAsyncTask3.TaskListener;
+import com.github.khandroid.kat.KhandroidAsyncTask.TaskListener;
 import com.github.khandroid.misc.KhandroidLog;
 
 
-public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttachedFunctionality
-        implements Kat3Executor<T, U, V>, TaskListener<U,V> {
-    private KhandroidAsyncTask3<T, U, V> mTask;
+public class ActivityKatExecutorFunctionality<T, U, V> extends ActivityAttachedFunctionality
+        implements KatExecutor<T, U, V>, TaskListener<U,V> {
+    private KhandroidAsyncTask<T, U, V> mTask;
     private TaskExecutorListener<U, V> mListener;
 
 
-    public <KatHostActivity extends HostActivity & ActivityKat3ExecutorFunctionality.HostingAble<U, V>> 
-            ActivityKat3ExecutorFunctionality(KatHostActivity activity) {
+    public <KatHostActivity extends HostActivity & ActivityKatExecutorFunctionality.HostingAble<U, V>> 
+            ActivityKatExecutorFunctionality(KatHostActivity activity) {
         super(activity);
         
         mListener = activity.getKatExecutorListener();
@@ -39,8 +39,8 @@ public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttached
         Object task = getActivity().getLastNonConfigurationInstance();
         KhandroidLog.v("Task: " + task);
 
-        if (task != null && task instanceof KhandroidAsyncTask3) {
-            mTask = (KhandroidAsyncTask3<T, U, V>) task;
+        if (task != null && task instanceof KhandroidAsyncTask) {
+            mTask = (KhandroidAsyncTask<T, U, V>) task;
             mTask.attach(this);
 
             if (mTask.getStatus() == AsyncTask.Status.RUNNING) {
@@ -65,7 +65,7 @@ public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttached
 
 
     @Override
-    public void execute(KhandroidAsyncTask3<T, U, V> task, T... params) {
+    public void execute(KhandroidAsyncTask<T, U, V> task, T... params) {
         mTask = task;
         mTask.execute(this, params);
     }

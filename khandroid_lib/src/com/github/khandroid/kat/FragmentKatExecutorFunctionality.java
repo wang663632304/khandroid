@@ -25,27 +25,27 @@ import android.support.v4.app.Fragment;
 import com.github.khandroid.fragment.FragmentAttachable;
 import com.github.khandroid.fragment.FragmentAttachedFunctionality;
 import com.github.khandroid.fragment.HostFragment;
-import com.github.khandroid.kat.KhandroidAsyncTask3.TaskListener;
+import com.github.khandroid.kat.KhandroidAsyncTask.TaskListener;
 import com.github.khandroid.misc.KhandroidLog;
 
 
-public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttachedFunctionality
-        implements Kat3Executor<T, U, V>, TaskListener<U, V> {
+public class FragmentKatExecutorFunctionality<T, U, V> extends FragmentAttachedFunctionality
+        implements KatExecutor<T, U, V>, TaskListener<U, V> {
     private final TaskExecutorListener<U, V> mExecutorListener;
     private final String mTaskFragmentTag;
     private TaskFragment mTaskFragment;
 
 
-    public <KatHostFragment extends HostFragment & FragmentKat3ExecutorFunctionality.HostingAble<U, V>> 
-            FragmentKat3ExecutorFunctionality(KatHostFragment fragment) {
+    public <KatHostFragment extends HostFragment & FragmentKatExecutorFunctionality.HostingAble<U, V>> 
+            FragmentKatExecutorFunctionality(KatHostFragment fragment) {
         super(fragment);
         mTaskFragmentTag = fragment.getClass().getSimpleName(); 
         mExecutorListener = fragment.getKatExecutorListener();
     }
 
 
-    public <KatHostFragment extends HostFragment & FragmentKat3ExecutorFunctionality.HostingAble<U, V>> 
-            FragmentKat3ExecutorFunctionality(KatHostFragment fragment, String customTaskTag) {
+    public <KatHostFragment extends HostFragment & FragmentKatExecutorFunctionality.HostingAble<U, V>> 
+            FragmentKatExecutorFunctionality(KatHostFragment fragment, String customTaskTag) {
         super(fragment);
         mTaskFragmentTag = customTaskTag;
         mExecutorListener = fragment.getKatExecutorListener();
@@ -131,7 +131,7 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
 
 
     @Override
-    public void execute(KhandroidAsyncTask3<T, U, V> task, T... params) {
+    public void execute(KhandroidAsyncTask<T, U, V> task, T... params) {
         mTaskFragment = new TaskFragment(task, params);
         mTaskFragment.setTargetFragment(getFragment(), 0);
         mTaskFragment.attach(this);
@@ -142,11 +142,11 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
 
 
     private class TaskFragment extends Fragment implements TaskListener<U, V> {
-        private KhandroidAsyncTask3<T, U, V> mTask;
+        private KhandroidAsyncTask<T, U, V> mTask;
         private TaskListener<U, V> mTaskListener;
 
 
-        public TaskFragment(KhandroidAsyncTask3<T, U, V> task, T... params) {
+        public TaskFragment(KhandroidAsyncTask<T, U, V> task, T... params) {
             super();
             setRetainInstance(true);
             mTask = task;
@@ -155,7 +155,7 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
         }
 
 
-        public void attach(FragmentKat3ExecutorFunctionality<T, U, V> executorFunc) {
+        public void attach(FragmentKatExecutorFunctionality<T, U, V> executorFunc) {
             if (executorFunc != null) {
                 if (mTaskListener == null && mTaskListener != executorFunc) {
                     KhandroidLog.d("Attaching TaskFragment to executor");

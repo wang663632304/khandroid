@@ -172,22 +172,18 @@ abstract public class ActivityHttpWCookiesFunctionality extends ActivityHttpFunc
 	private ArrayList<ParcelableCookie> prepareParcelableCookies() {
 		ArrayList<ParcelableCookie> ret = new ArrayList<ParcelableCookie>();
 
-		if (isHttpClientInitialized()) {
-			DefaultHttpClient httpClient = getHttpClient();
-			CookieStore cs = httpClient.getCookieStore();
-			List<Cookie> l = cs.getCookies();
-			for (Cookie c : l) {
-				ParcelableCookie tmpCookie = new ParcelableCookie();
-				tmpCookie.setName(c.getName());
-				tmpCookie.setValue(c.getValue());
-				tmpCookie.setDomain(c.getDomain());
-				tmpCookie.setPath(c.getPath());
-				tmpCookie.setExpiryDate(c.getExpiryDate());
-				tmpCookie.setVersion(c.getVersion());
-				ret.add(tmpCookie);
-			}
-		} else {
-			KhandroidLog.tw("You are using startActivityForResultWithCookies() or startActivityWithCookies() before calling getHttpClient(), i.e. there are no cookies created yet.");
+		DefaultHttpClient httpClient = getHttpClient();
+		CookieStore cs = httpClient.getCookieStore();
+		List<Cookie> l = cs.getCookies();
+		for (Cookie c : l) {
+			ParcelableCookie tmpCookie = new ParcelableCookie();
+			tmpCookie.setName(c.getName());
+			tmpCookie.setValue(c.getValue());
+			tmpCookie.setDomain(c.getDomain());
+			tmpCookie.setPath(c.getPath());
+			tmpCookie.setExpiryDate(c.getExpiryDate());
+			tmpCookie.setVersion(c.getVersion());
+			ret.add(tmpCookie);
 		}
 
 		return ret;

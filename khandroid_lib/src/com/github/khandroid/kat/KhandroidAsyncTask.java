@@ -9,12 +9,12 @@ import com.github.khandroid.misc.KhandroidLog;
 import android.os.AsyncTask;
 
 
-abstract public class KhandroidAsyncTask3<Params, Progress, Result> {
+abstract public class KhandroidAsyncTask<Params, Progress, Result> {
     private InnerAsyncTask<Params, Progress, Result> mTask;
     private TaskListener<Progress, Result> mListener;
 
 
-    public KhandroidAsyncTask3() {
+    public KhandroidAsyncTask() {
         mTask = new InnerAsyncTask<Params, Progress, Result>(this);
     }
 
@@ -131,10 +131,10 @@ abstract public class KhandroidAsyncTask3<Params, Progress, Result> {
     abstract protected Result doInBackground(Params... params);
 
     private static class InnerAsyncTask<T, U, V> extends AsyncTask<T, U, V> {
-        private KhandroidAsyncTask3<T, U, V> mWrapper;
+        private KhandroidAsyncTask<T, U, V> mWrapper;
 
 
-        public InnerAsyncTask(KhandroidAsyncTask3<T, U, V> wrapper) {
+        public InnerAsyncTask(KhandroidAsyncTask<T, U, V> wrapper) {
             super();
             mWrapper = wrapper;
         }

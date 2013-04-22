@@ -104,7 +104,7 @@ abstract public class ActivityHttpFunctionality extends ActivityUniqueAttachedFu
     }
 
 
-    // On honeycomb NetworkOnMainThreadException exception is thrown if you try to shutdown on UI thread
+    // On Honeycomb+ NetworkOnMainThreadException exception is thrown if you try to shutdown on UI thread
     private void shutDownInBackground() {
         Thread t = new Thread(new Runnable() {
             @Override

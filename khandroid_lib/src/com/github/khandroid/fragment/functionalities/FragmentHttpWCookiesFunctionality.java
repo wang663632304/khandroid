@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package com.github.khandroid.fragment.functionalities;
 
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.github.khandroid.fragment.HostFragment;
-import com.github.khandroid.misc.KhandroidLog;
 import com.github.khandroid.rest.ParcelableCookie;
 
 import khandroid.ext.apache.http.client.CookieStore;
@@ -44,14 +42,14 @@ abstract public class FragmentHttpWCookiesFunctionality extends FragmentHttpFunc
         super(fragment);
         getFragment().setRetainInstance(true);
     }
-    
-    
+
+
     public FragmentHttpWCookiesFunctionality(HostFragment fragment, BasicCookieStore cookies) {
         this(fragment);
         this.mCookies = cookies;
-    }   
+    }
 
-    
+
     public void startActivityForResultWithCookies(Intent intent, int requestCode) {
         intent.putParcelableArrayListExtra(COOKIES_PARAM_NAME, prepareParcelableCookies());
         getFragment().getActivity().startActivityForResult(intent, requestCode);
@@ -71,70 +69,72 @@ abstract public class FragmentHttpWCookiesFunctionality extends FragmentHttpFunc
 
     protected boolean cookieExists(Cookie cookie) {
         boolean ret = false;
-        
+
         List<Cookie> l = mCookies.getCookies();
-        for(Cookie c : l) {
+        for (Cookie c : l) {
             if (c.equals(cookie)) {
                 ret = true;
                 break;
             }
         }
-        
+
         return ret;
     }
-    
-    
+
+
     protected boolean cookieExists(String name, String domain, String path) {
         boolean ret = false;
-        
+
         List<Cookie> l = mCookies.getCookies();
-        for(Cookie c : l) {
-            if (c.getName().equals(name) && c.getDomain().equals(domain) && c.getPath().equals(path)) {
+        for (Cookie c : l) {
+            if (c.getName().equals(name) && c.getDomain().equals(domain)
+                    && c.getPath().equals(path)) {
                 ret = true;
                 break;
             }
         }
-        
+
         return ret;
     }
-    
-    
+
+
     protected String getCookieValue(String name, String domain, String path) {
         String ret = null;
-        
+
         List<Cookie> l = mCookies.getCookies();
-        for(Cookie c : l) {
-            if (c.getName().equals(name) && c.getDomain().equals(domain) && c.getPath().equals(path)) {
+        for (Cookie c : l) {
+            if (c.getName().equals(name) && c.getDomain().equals(domain)
+                    && c.getPath().equals(path)) {
                 ret = c.getValue();
                 break;
             }
         }
-        
+
         return ret;
     }
-    
-    
+
+
     public DefaultHttpClient getHttpClient() {
         DefaultHttpClient httpClient = (DefaultHttpClient) super.getHttpClient();
         httpClient.setCookieStore(mCookies);
 
         return httpClient;
     }
-    
-    
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         loadIncommingCookies(savedInstanceState, getFragment().getActivity().getIntent());
-    }   
+    }
 
 
     private void loadIncommingCookies(Bundle savedInstanceState, Intent i) {
         if (mCookies == null) {
             mCookies = new BasicCookieStore();
         }
-        
+
         Bundle extras;
         if (savedInstanceState == null) {
             extras = i.getExtras();
@@ -151,7 +151,7 @@ abstract public class FragmentHttpWCookiesFunctionality extends FragmentHttpFunc
                 c2.setPath(c.getPath());
                 c2.setVersion(c.getVersion());
                 c2.setExpiryDate(c.getExpiryDate());
-                
+
                 mCookies.addCookie(c2);
             }
         }
@@ -161,22 +161,18 @@ abstract public class FragmentHttpWCookiesFunctionality extends FragmentHttpFunc
     private ArrayList<ParcelableCookie> prepareParcelableCookies() {
         ArrayList<ParcelableCookie> ret = new ArrayList<ParcelableCookie>();
 
-        if (isHttpClientInitialized()) {
-            DefaultHttpClient httpClient = getHttpClient();
-            CookieStore cs = httpClient.getCookieStore();
-            List<Cookie> l = cs.getCookies();
-            for (Cookie c : l) {
-                ParcelableCookie tmpCookie = new ParcelableCookie();
-                tmpCookie.setName(c.getName());
-                tmpCookie.setValue(c.getValue());
-                tmpCookie.setDomain(c.getDomain());
-                tmpCookie.setPath(c.getPath());
-                tmpCookie.setExpiryDate(c.getExpiryDate());
-                tmpCookie.setVersion(c.getVersion());
-                ret.add(tmpCookie);
-            }
-        } else {
-            KhandroidLog.tw("You are using startActivityForResultWithCookies() or startActivityWithCookies() before calling getHttpClient(), i.e. there are no cookies created yet.");
+        DefaultHttpClient httpClient = getHttpClient();
+        CookieStore cs = httpClient.getCookieStore();
+        List<Cookie> l = cs.getCookies();
+        for (Cookie c : l) {
+            ParcelableCookie tmpCookie = new ParcelableCookie();
+            tmpCookie.setName(c.getName());
+            tmpCookie.setValue(c.getValue());
+            tmpCookie.setDomain(c.getDomain());
+            tmpCookie.setPath(c.getPath());
+            tmpCookie.setExpiryDate(c.getExpiryDate());
+            tmpCookie.setVersion(c.getVersion());
+            ret.add(tmpCookie);
         }
 
         return ret;
