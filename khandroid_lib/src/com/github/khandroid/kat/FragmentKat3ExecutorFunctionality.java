@@ -67,12 +67,6 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
             AsyncTask.Status status = mTaskFragment.getTaskStatus();
             if (status == AsyncTask.Status.RUNNING) {
                 onContinueWithTask();
-            } else if (status == AsyncTask.Status.FINISHED) {
-                if (!mTaskFragment.isTaskCancelled()) {
-                    onTaskHasBeenCompleted(mTaskFragment.getTaskResult());
-                } else {
-                    onTaskHasBeenCancelled();
-                }
             }
         }
     }
@@ -124,24 +118,6 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
 
         if (mExecutorListener != null) {
             mExecutorListener.onTaskCancelled();
-        }
-    }
-
-
-    private void onTaskHasBeenCancelled() {
-        closeTaskFragment();
-
-        if (mExecutorListener != null) {
-            mExecutorListener.onTaskHasBeenCancelled();
-        }
-    }
-
-
-    private void onTaskHasBeenCompleted(V taskResult) {
-        closeTaskFragment();
-
-        if (mExecutorListener != null) {
-            mExecutorListener.onTaskHasBeenCompleted(taskResult);
         }
     }
 
@@ -234,32 +210,6 @@ public class FragmentKat3ExecutorFunctionality<T, U, V> extends FragmentAttached
 
         public AsyncTask.Status getTaskStatus() {
             return mTask.getStatus();
-        }
-
-
-        public V getTaskResult() {
-            V ret = null;
-
-            if (mTask.getStatus() == AsyncTask.Status.FINISHED) {
-                try {
-                    ret = mTask.get();
-                } catch (InterruptedException e) {
-                    // Cannot happen. We check if it is finished
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    // Cannot happen. We check if it is finished
-                    e.printStackTrace();
-                }
-            } else {
-                throw new IllegalStateException("Task is not finished.");
-            }
-
-            return ret;
-        }
-
-
-        public boolean isTaskCancelled() {
-            return mTask.isCancelled();
         }
 
 

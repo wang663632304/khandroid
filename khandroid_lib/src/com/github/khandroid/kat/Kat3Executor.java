@@ -14,8 +14,5 @@ public interface Kat3Executor<T, U, V> {
         void onTaskCancelled();
         void onTaskCompleted(Result result);
         void onContinueWithTask();
-        void onTaskHasBeenCompleted(Result result);
-        void onTaskHasBeenCancelled();
-        
     }
 }

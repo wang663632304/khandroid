@@ -19,22 +19,17 @@ abstract public class KhandroidAsyncTask3<Params, Progress, Result> {
     }
 
 
-    //    public final AsyncTask<Params, Progress, Result> execute() {
-    //        return mTask.execute();
-    //    }
-
     public final AsyncTask<Params, Progress, Result> execute(TaskListener<Progress, Result> listener,
                                                              Params... params) {
         mListener = listener;
         return execute(params);
     }
-    
+
 
     public final AsyncTask<Params, Progress, Result> execute(Params... params) {
         KhandroidLog.v("Executing KhandroidAsyncTask");
         return mTask.execute(params);
     }
-
 
 
     public void detach() {
@@ -101,13 +96,14 @@ abstract public class KhandroidAsyncTask3<Params, Progress, Result> {
         // intentionally left empty
     }
 
-    
+
     protected void onProgressUpdateCaler(Progress... values) {
         onProgressUpdate(values);
         if (mListener != null) {
             mListener.onTaskPublishProgress(values);
         }
     }
+
 
     protected void onProgressUpdate(Progress... values) {
         // intentionally left empty
@@ -179,7 +175,6 @@ abstract public class KhandroidAsyncTask3<Params, Progress, Result> {
             super.publishProgress(values);
         }
     }
-
 
     public interface TaskListener<Progress, Result> {
         void onTaskPublishProgress(Progress... progress);

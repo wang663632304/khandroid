@@ -1,7 +1,5 @@
 package com.github.khandroid.kat;
 
-import java.util.concurrent.ExecutionException;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -47,20 +45,6 @@ public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttached
 
             if (mTask.getStatus() == AsyncTask.Status.RUNNING) {
                 onContinueWithTask();
-            } else if (mTask.getStatus() == AsyncTask.Status.FINISHED) {
-                try {
-                    if (!mTask.isCancelled()) {
-                        onTaskHasBeenCompleted(mTask.get());
-                    } else {
-                        onTaskHasBeenCancelled();
-                    }
-                } catch (InterruptedException e) {
-                    // Cannot happen. We check if it is finished
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    // Cannot happen. We check if it is finished
-                    e.printStackTrace();
-                }
             }
         }
     }
@@ -112,24 +96,6 @@ public class ActivityKat3ExecutorFunctionality<T, U, V> extends ActivityAttached
         }
     }
 
-    
-    private void onTaskHasBeenCancelled() {
-        mTask = null;
-        if (mListener != null) {
-            mListener.onTaskHasBeenCancelled();
-        }
-    }
-
-
-    private void onTaskHasBeenCompleted(V taskResult) {
-        mTask.detach();
-        mTask = null;
-
-        if (mListener != null) {
-            mListener.onTaskHasBeenCompleted(taskResult);
-        }
-    }
-    
 
     @Override
     protected void onDestroy() {
