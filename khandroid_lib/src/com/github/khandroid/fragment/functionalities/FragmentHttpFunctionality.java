@@ -45,9 +45,11 @@ abstract public class FragmentHttpFunctionality extends FragmentUniqueAttachedFu
     }
 
     
-    public void setAutoShutdown(boolean value) {
+    public boolean setAutoShutdown(boolean value) {
+        boolean ret = mAutoShutdown;
         mAutoShutdown = value;
-    }
+        return ret;
+    } 
     
     
     public boolean isOnline() {

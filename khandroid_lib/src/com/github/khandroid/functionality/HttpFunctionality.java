@@ -25,7 +25,7 @@ import khandroid.ext.apache.http.client.methods.HttpUriRequest;
 
 
 public interface HttpFunctionality {
-    public void setAutoShutdown(boolean value);
+    public boolean setAutoShutdown(boolean value);
     public boolean isOnline();
     public String execute(HttpUriRequest httpRequest) throws ClientProtocolException, IOException;
     public void shutDown();
