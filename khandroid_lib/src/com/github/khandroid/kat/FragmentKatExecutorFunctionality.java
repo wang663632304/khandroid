@@ -22,9 +22,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-import com.github.khandroid.fragment.FragmentAttachable;
-import com.github.khandroid.fragment.FragmentAttachedFunctionality;
-import com.github.khandroid.fragment.HostFragment;
+import com.github.khandroid.core.FragmentAttachable;
+import com.github.khandroid.core.FragmentAttachedFunctionality;
+import com.github.khandroid.core.HostFragment;
 import com.github.khandroid.kat.KhandroidAsyncTask.TaskListener;
 import com.github.khandroid.misc.KhandroidLog;
 

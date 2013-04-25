@@ -15,7 +15,7 @@
  */
 
 
-package com.github.khandroid.fragment;
+package com.github.khandroid.core;
 
 import android.os.Bundle;
 

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.github.khandroid.db;
 
-import android.database.sqlite.SQLiteDatabase;
+package com.github.khandroid.core;
 
-public interface IDBStorable {
-	long save(SQLiteDatabase dbc);
-	boolean loadByID(SQLiteDatabase dbc, long id);
+
+public class FragmentUniqueAttachedFunctionality extends FragmentAttachedFunctionality {
+    public FragmentUniqueAttachedFunctionality(HostFragment fragment) {
+        super(fragment);
+    }
+
 }

@@ -19,16 +19,13 @@ package com.github.khandroid.functionality;
 
 import java.io.IOException;
 
+import khandroid.ext.apache.http.HttpResponse;
 import khandroid.ext.apache.http.client.ClientProtocolException;
-import khandroid.ext.apache.http.client.HttpClient;
 import khandroid.ext.apache.http.client.methods.HttpUriRequest;
 
 
 public interface HttpFunctionality {
-    public boolean setAutoShutdown(boolean value);
-    public boolean isOnline();
-    public String execute(HttpUriRequest httpRequest) throws ClientProtocolException, IOException;
-    public void shutDown();
-    
-    public HttpClient getHttpClient();
+    String execute(HttpUriRequest httpRequest) throws ClientProtocolException, IOException;
+    HttpResponse executeForHttpResponse(HttpUriRequest httpRequest) throws ClientProtocolException, IOException;
+    void shutDown();
 }

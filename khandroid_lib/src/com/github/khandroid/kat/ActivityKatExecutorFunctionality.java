@@ -3,9 +3,9 @@ package com.github.khandroid.kat;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import com.github.khandroid.activity.ActivityAttachedFunctionality;
-import com.github.khandroid.activity.HostActivity;
-import com.github.khandroid.fragment.FragmentAttachable;
+import com.github.khandroid.core.ActivityAttachedFunctionality;
+import com.github.khandroid.core.FragmentAttachable;
+import com.github.khandroid.core.HostActivity;
 import com.github.khandroid.kat.KhandroidAsyncTask.TaskListener;
 import com.github.khandroid.misc.KhandroidLog;
 

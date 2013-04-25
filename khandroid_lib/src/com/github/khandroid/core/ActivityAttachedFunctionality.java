@@ -15,7 +15,7 @@
  */
 
 
-package com.github.khandroid.activity;
+package com.github.khandroid.core;
 
 import com.github.khandroid.misc.SuperNotCalledException;
 

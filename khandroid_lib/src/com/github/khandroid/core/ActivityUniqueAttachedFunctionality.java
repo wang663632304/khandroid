@@ -15,15 +15,14 @@
  */
 
 
-package com.github.khandroid.fragment;
-
-import android.os.Bundle;
+package com.github.khandroid.core;
 
 
-public interface FragmentAttachable {
-    void fragmentLifeCycleEvent(int type, Bundle b);
-    
-    public interface HostingAble {
-        
-    }
+
+
+public class ActivityUniqueAttachedFunctionality extends ActivityAttachedFunctionality {
+	public ActivityUniqueAttachedFunctionality(HostActivity activity) {
+		super(activity);
+	}
+
 }
