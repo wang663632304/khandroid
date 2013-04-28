@@ -10,7 +10,7 @@ import khandroid.ext.apache.http.NameValuePair;
 import khandroid.ext.apache.http.client.entity.UrlEncodedFormEntity;
 import khandroid.ext.apache.http.client.methods.HttpPost;
 import khandroid.ext.apache.http.client.methods.HttpUriRequest;
-import khandroid.ext.apache.http.client.utils.URIUtils;
+import khandroid.ext.apache.http.client.utils.URIBuilder;
 import khandroid.ext.apache.http.client.utils.URLEncodedUtils;
 import khandroid.ext.apache.http.message.BasicNameValuePair;
 
@@ -30,8 +30,10 @@ public class PostRequestBuilder extends GetRequestBuilder {
 		if (protocol != null && !protocol.equals("") && getDomain() != null && !getDomain().equals("") && getPath() != null && !getPath().equals("")) {
 			URI uri;
 			try {
-				uri = URIUtils.createURI(protocol, getDomain(), getPort(), getPath(),
-				             			URLEncodedUtils.format(getGetParams(), "UTF-8"), null);
+                URIBuilder ub = new URIBuilder();
+                ub.setScheme(protocol).setHost(getDomain()).setPort(getPort()).setPath(getPath());
+                ub.setQuery(URLEncodedUtils.format(getGetParams(), "UTF-8"));
+                uri = ub.build();
 			} catch (URISyntaxException e) {
 				throw new IllegalStateException("Error creating URI.", e);
 			}

@@ -407,7 +407,7 @@ public class ActivityUtils {
     }
 
 
-    public boolean isOnline(Context context) {
+    public static boolean isOnline(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 

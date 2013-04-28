@@ -16,8 +16,6 @@
 
 package com.github.khandroid.kat;
 
-import java.util.concurrent.ExecutionException;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

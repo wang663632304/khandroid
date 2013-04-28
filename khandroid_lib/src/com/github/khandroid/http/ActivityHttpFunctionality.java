@@ -23,13 +23,13 @@ import khandroid.ext.apache.http.client.ClientProtocolException;
 import khandroid.ext.apache.http.client.HttpClient;
 import khandroid.ext.apache.http.client.methods.HttpUriRequest;
 
-import com.github.khandroid.core.ActivityUniqueAttachedFunctionality;
+import com.github.khandroid.core.ActivityAttachedFunctionality;
 import com.github.khandroid.core.HostActivity;
 import com.github.khandroid.functionality.HttpFunctionality;
 import com.github.khandroid.functionality.HttpFunctionalityImpl;
 
 
-public class ActivityHttpFunctionality extends ActivityUniqueAttachedFunctionality
+public class ActivityHttpFunctionality extends ActivityAttachedFunctionality
         implements HttpFunctionality {
 
     private final HttpFunctionality mHttpFunc;
@@ -39,7 +39,11 @@ public class ActivityHttpFunctionality extends ActivityUniqueAttachedFunctionali
     public ActivityHttpFunctionality(HostActivity activity, HttpClient httpClient) {
         super(activity);
 
-        mHttpFunc = new HttpFunctionalityImpl(httpClient); 
+        if (httpClient != null) {
+            mHttpFunc = new HttpFunctionalityImpl(httpClient);
+        } else {
+            throw new IllegalArgumentException("Parameter httpClient is null");
+        }
     }
 
 
@@ -72,12 +76,21 @@ public class ActivityHttpFunctionality extends ActivityUniqueAttachedFunctionali
     @Override
     public HttpResponse executeForHttpResponse(HttpUriRequest httpRequest) throws ClientProtocolException,
                                                                           IOException {
-        return mHttpFunc.executeForHttpResponse(httpRequest);
+        setAutoShutdown(false);
+        HttpResponse ret = mHttpFunc.executeForHttpResponse(httpRequest);
+        setAutoShutdown(true);
+
+        return ret;
     }
 
 
     @Override
     public void shutDown() {
         mHttpFunc.shutDown();
+    }
+    
+    
+    protected HttpFunctionality getHttpFunctionality() {
+        return mHttpFunc;
     }
 }

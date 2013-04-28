@@ -17,7 +17,9 @@
 
 package com.github.khandroid.core;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import com.github.khandroid.misc.SuperNotCalledException;
 
@@ -176,5 +178,16 @@ public class FragmentAttachedFunctionality implements FragmentAttachable {
     
     public HostFragment getFragment() {
         return mFragment;
+    }
+    
+    public Activity getActivity() {
+        Activity ret = null;
+        
+        Fragment f = getFragment();
+        if (f != null) {
+            ret = f.getActivity();
+        }
+        
+        return ret;
     }
 }
