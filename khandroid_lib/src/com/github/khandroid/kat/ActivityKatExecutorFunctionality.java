@@ -4,25 +4,24 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.github.khandroid.core.ActivityAttachedFunctionality;
-import com.github.khandroid.core.FragmentAttachable;
 import com.github.khandroid.core.HostActivity;
 import com.github.khandroid.kat.KhandroidAsyncTask.TaskListener;
 import com.github.khandroid.misc.KhandroidLog;
 
 
 public class ActivityKatExecutorFunctionality<T, U, V> extends ActivityAttachedFunctionality
-        implements KatExecutor<T, U, V>, TaskListener<U,V> {
+        implements KatExecutor<T, U, V>, TaskListener<U, V> {
+
+    
     private KhandroidAsyncTask<T, U, V> mTask;
     private TaskExecutorListener<U, V> mListener;
 
-
-    public <KatHostActivity extends HostActivity & ActivityKatExecutorFunctionality.HostingAble<U, V>> 
-            ActivityKatExecutorFunctionality(KatHostActivity activity) {
+    
+    public ActivityKatExecutorFunctionality(HostActivity activity, TaskExecutorListener<U, V> listener) {
         super(activity);
-        
-        mListener = activity.getKatExecutorListener();
+        mListener = listener;
     }
-
+    
 
     protected void onContinueWithTask() {
         if (mListener != null) {
@@ -69,7 +68,7 @@ public class ActivityKatExecutorFunctionality<T, U, V> extends ActivityAttachedF
         mTask = task;
         mTask.execute(this, params);
     }
-    
+
 
     @Override
     public void onTaskCompleted(V result) {
@@ -80,13 +79,14 @@ public class ActivityKatExecutorFunctionality<T, U, V> extends ActivityAttachedF
         }
     }
 
-    
+
     @Override
     public void onTaskPublishProgress(U... progress) {
         if (mListener != null) {
             mListener.onTaskPublishProgress(progress);
         }
     }
+
 
     @Override
     public void onTaskCancelled() {
@@ -113,11 +113,11 @@ public class ActivityKatExecutorFunctionality<T, U, V> extends ActivityAttachedF
     @Override
     public boolean cancelTask(boolean mayInterruptIfRunning) {
         boolean ret = false;
-        
+
         if (mTask != null) {
             ret = mTask.cancel(mayInterruptIfRunning);
         }
-        
+
         return ret;
     }
 
@@ -129,12 +129,7 @@ public class ActivityKatExecutorFunctionality<T, U, V> extends ActivityAttachedF
         if (mTask != null) {
             ret = true;
         }
-            
-        return ret;
-    }
 
-    
-    public interface HostingAble<U, V> extends FragmentAttachable.HostingAble {
-        TaskExecutorListener<U, V> getKatExecutorListener();
+        return ret;
     }
 }

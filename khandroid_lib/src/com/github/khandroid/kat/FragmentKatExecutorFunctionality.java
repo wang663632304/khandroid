@@ -20,7 +20,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-import com.github.khandroid.core.FragmentAttachable;
 import com.github.khandroid.core.FragmentAttachedFunctionality;
 import com.github.khandroid.core.HostFragment;
 import com.github.khandroid.kat.KhandroidAsyncTask.TaskListener;
@@ -34,19 +33,17 @@ public class FragmentKatExecutorFunctionality<T, U, V> extends FragmentAttachedF
     private TaskFragment mTaskFragment;
 
 
-    public <KatHostFragment extends HostFragment & FragmentKatExecutorFunctionality.HostingAble<U, V>> 
-            FragmentKatExecutorFunctionality(KatHostFragment fragment) {
+    public FragmentKatExecutorFunctionality(HostFragment fragment, TaskExecutorListener<U, V> executorListener) {
         super(fragment);
         mTaskFragmentTag = fragment.getClass().getSimpleName(); 
-        mExecutorListener = fragment.getKatExecutorListener();
+        mExecutorListener = executorListener;
     }
 
 
-    public <KatHostFragment extends HostFragment & FragmentKatExecutorFunctionality.HostingAble<U, V>> 
-            FragmentKatExecutorFunctionality(KatHostFragment fragment, String customTaskTag) {
+    public FragmentKatExecutorFunctionality(HostFragment fragment, TaskExecutorListener<U, V> executorListener, String customTaskTag) {
         super(fragment);
         mTaskFragmentTag = customTaskTag;
-        mExecutorListener = fragment.getKatExecutorListener();
+        mExecutorListener = executorListener;
     }
     
     
@@ -238,9 +235,5 @@ public class FragmentKatExecutorFunctionality<T, U, V> extends FragmentAttachedF
         }
 
         return ret;
-    }
-
-    public interface HostingAble<U, V> extends FragmentAttachable.HostingAble {
-        TaskExecutorListener<U, V> getKatExecutorListener();
     }
 }
