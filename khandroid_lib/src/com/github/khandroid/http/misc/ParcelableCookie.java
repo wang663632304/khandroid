@@ -1,4 +1,4 @@
-package com.github.khandroid.http;
+package com.github.khandroid.http.misc;
 
 import java.util.Date;
 

@@ -21,6 +21,7 @@ import java.io.IOException;
 import khandroid.ext.apache.http.HttpResponse;
 import khandroid.ext.apache.http.client.ClientProtocolException;
 import khandroid.ext.apache.http.client.HttpClient;
+import khandroid.ext.apache.http.client.ResponseHandler;
 import khandroid.ext.apache.http.client.methods.HttpUriRequest;
 
 import com.github.khandroid.core.ActivityAttachedFunctionality;
@@ -92,5 +93,16 @@ public class ActivityHttpFunctionality extends ActivityAttachedFunctionality
     
     protected HttpFunctionality getHttpFunctionality() {
         return mHttpFunc;
+    }
+
+
+    @Override
+    public <T> T execute(HttpUriRequest httpRequest, ResponseHandler<T> responseHandler) throws ClientProtocolException,
+                                                                                        IOException {
+        setAutoShutdown(false);
+        T ret =  mHttpFunc.execute(httpRequest, responseHandler);
+        setAutoShutdown(true);
+        
+        return ret;
     }
 }

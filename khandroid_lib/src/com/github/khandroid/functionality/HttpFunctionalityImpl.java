@@ -18,7 +18,7 @@ package com.github.khandroid.functionality;
 
 import java.io.IOException;
 
-import com.github.khandroid.http.KhandroidBasicResponseHandler;
+import com.github.khandroid.http.misc.KhandroidBasicResponseHandler;
 
 import khandroid.ext.apache.http.HttpResponse;
 import khandroid.ext.apache.http.client.ClientProtocolException;
@@ -29,7 +29,7 @@ import khandroid.ext.apache.http.client.methods.HttpUriRequest;
 
 public class HttpFunctionalityImpl implements HttpFunctionality {
     private final HttpClient mHttpClient;
-    private boolean mIsShutdown = false;
+    private boolean mIsShutdowned = false;
 
 
     public HttpFunctionalityImpl(HttpClient httpClient) {
@@ -49,6 +49,14 @@ public class HttpFunctionalityImpl implements HttpFunctionality {
 
         return ret;
     }
+    
+    
+    @Override
+    public <T> T execute(HttpUriRequest httpRequest, ResponseHandler<T> responseHandler) throws ClientProtocolException,
+                                                                                        IOException {
+        HttpClient httpClient = getHttpClient();
+        return httpClient.execute(httpRequest, responseHandler);
+    }
 
 
     public HttpResponse executeForHttpResponse(HttpUriRequest httpRequest) throws ClientProtocolException,
@@ -63,17 +71,15 @@ public class HttpFunctionalityImpl implements HttpFunctionality {
     }
 
 
-    public boolean isShutdown() {
-        return mIsShutdown;
-    }
-
-
     // On Honeycomb+ NetworkOnMainThreadException exception is thrown if you try to shutdown on UI thread
-    private void shutDownInBackground() {
+    synchronized private void shutDownInBackground() {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                mHttpClient.getConnectionManager().shutdown();
+                if (!mIsShutdowned) {
+                    mIsShutdowned = true;                
+                    mHttpClient.getConnectionManager().shutdown();
+                }
             }
         });
 
@@ -81,7 +87,7 @@ public class HttpFunctionalityImpl implements HttpFunctionality {
     }
 
 
-    protected HttpClient getHttpClient() {
+    public HttpClient getHttpClient() {
         return mHttpClient;
     }
 }

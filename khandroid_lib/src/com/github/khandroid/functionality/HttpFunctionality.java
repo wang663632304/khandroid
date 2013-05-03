@@ -21,11 +21,13 @@ import java.io.IOException;
 
 import khandroid.ext.apache.http.HttpResponse;
 import khandroid.ext.apache.http.client.ClientProtocolException;
+import khandroid.ext.apache.http.client.ResponseHandler;
 import khandroid.ext.apache.http.client.methods.HttpUriRequest;
 
 
 public interface HttpFunctionality {
     String execute(HttpUriRequest httpRequest) throws ClientProtocolException, IOException;
+    <T> T execute(HttpUriRequest httpRequest, ResponseHandler<T> responseHandler) throws ClientProtocolException, IOException;
     HttpResponse executeForHttpResponse(HttpUriRequest httpRequest) throws ClientProtocolException, IOException;
     void shutDown();
 }

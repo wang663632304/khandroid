@@ -23,7 +23,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.github.khandroid.http.ParcelableCookie;
+import com.github.khandroid.http.misc.ParcelableCookie;
 
 import khandroid.ext.apache.http.client.CookieStore;
 import khandroid.ext.apache.http.cookie.Cookie;
@@ -223,7 +223,7 @@ public class HttpFunctionalityWCookiesImpl extends HttpFunctionalityImpl impleme
 
 
     @Override
-    protected AbstractHttpClient getHttpClient() {
+    public AbstractHttpClient getHttpClient() {
         return ((AbstractHttpClient) super.getHttpClient());
     }
 }

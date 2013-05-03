@@ -24,7 +24,7 @@ import khandroid.ext.apache.http.impl.client.BasicCookieStore;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.github.khandroid.http.ParcelableCookie;
+import com.github.khandroid.http.misc.ParcelableCookie;
 
 public interface HttpFunctionalityWCookiesHelper {
     public ArrayList<ParcelableCookie> prepareParcelableCookies(AbstractHttpClient httpClient);
