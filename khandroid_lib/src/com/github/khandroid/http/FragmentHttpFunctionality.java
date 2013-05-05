@@ -34,7 +34,7 @@ public class FragmentHttpFunctionality extends FragmentAttachedFunctionality imp
         HttpFunctionality {
 
     private final HttpFunctionality mHttpFunc;
-    private boolean mAutoShutdown = true;
+    private boolean mAutoShutdown = false;
 
 
     public FragmentHttpFunctionality(HostFragment fragment, HttpClient httpClient) {
@@ -66,9 +66,7 @@ public class FragmentHttpFunctionality extends FragmentAttachedFunctionality imp
 
     @Override
     public String execute(HttpUriRequest httpRequest) throws ClientProtocolException, IOException {
-        setAutoShutdown(false);
         String ret = mHttpFunc.execute(httpRequest);
-        setAutoShutdown(true);
 
         return ret;
     }
@@ -77,9 +75,7 @@ public class FragmentHttpFunctionality extends FragmentAttachedFunctionality imp
     @Override
     public HttpResponse executeForHttpResponse(HttpUriRequest httpRequest) throws ClientProtocolException,
                                                                           IOException {
-        setAutoShutdown(false);
         HttpResponse ret = mHttpFunc.executeForHttpResponse(httpRequest);
-        setAutoShutdown(true);
 
         return ret;
     }
@@ -94,9 +90,7 @@ public class FragmentHttpFunctionality extends FragmentAttachedFunctionality imp
     @Override
     public <T> T execute(HttpUriRequest httpRequest, ResponseHandler<T> responseHandler) throws ClientProtocolException,
                                                                                         IOException {
-        setAutoShutdown(false);
         T ret =  mHttpFunc.execute(httpRequest, responseHandler);
-        setAutoShutdown(true);
         
         return ret;
     }
