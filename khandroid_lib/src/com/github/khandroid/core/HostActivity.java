@@ -19,8 +19,6 @@ package com.github.khandroid.core;
 
 import java.util.ArrayList;
 
-import com.github.khandroid.core.ActivityAttachable.HostingAble;
-
 
 import android.app.Activity;
 import android.os.Bundle;
