@@ -6,12 +6,15 @@ import java.util.concurrent.TimeoutException;
 
 import com.github.khandroid.misc.KhandroidLog;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
+import android.os.Build;
 
 
 abstract public class KhandroidAsyncTask<Params, Progress, Result> {
     private InnerAsyncTask<Params, Progress, Result> mTask;
     private TaskListener<Progress, Result> mListener;
+    private boolean mIsSerialized = true;
 
 
     public KhandroidAsyncTask() {
@@ -26,9 +29,15 @@ abstract public class KhandroidAsyncTask<Params, Progress, Result> {
     }
 
 
+    @SuppressLint("NewApi")
     public final AsyncTask<Params, Progress, Result> execute(Params... params) {
         KhandroidLog.v("Executing KhandroidAsyncTask");
-        return mTask.execute(params);
+
+        if (!mIsSerialized && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)) {
+            return mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
+        } else {
+            return mTask.execute(params);
+        }
     }
 
 
@@ -185,4 +194,15 @@ abstract public class KhandroidAsyncTask<Params, Progress, Result> {
 
         void onTaskCompleted(Result result);
     }
+
+
+    public boolean isSerialized() {
+        return mIsSerialized;
+    }
+
+
+    public void setIsSerialized(boolean isSerialized) {
+        mIsSerialized = isSerialized;
+    }
+
 }
