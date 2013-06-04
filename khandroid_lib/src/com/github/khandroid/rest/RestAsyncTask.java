@@ -16,6 +16,7 @@
 
 package com.github.khandroid.rest;
 
+import com.github.khandroid.functionality.RestFunctionality;
 import com.github.khandroid.kat.KhandroidAsyncTask;
 
 
@@ -33,6 +34,43 @@ import com.github.khandroid.kat.KhandroidAsyncTask;
  */
 abstract public class RestAsyncTask<Params, Progress, Result> extends
         KhandroidAsyncTask<Params, Progress, RestAsyncTask.ResultWrapper<Result>> {
+    
+    private RestFunctionality mRestFunc;
+    
+    abstract protected RestExchange<Result> createRestExchange();
+    
+    
+    public RestAsyncTask(RestFunctionality restFunc) {
+        super();
+        
+        if (restFunc != null) {
+            mRestFunc = restFunc;
+        } else {
+            throw new IllegalStateException("Parameter restFunc is null");
+        }
+    }
+
+
+    @Override
+    protected ResultWrapper<Result> doInBackground(Params... params) {
+        ResultWrapper<Result> ret;
+
+        RestExchange<Result> x = createRestExchange();
+        try {
+            mRestFunc.execute(x);
+            if (x.isOk()) {
+                ret = new ResultWrapper<Result>(ResultWrapper.STATUS_OK, x.getResult());
+            } else {
+                ret = new ResultWrapper<Result>(ResultWrapper.STATUS_SOFT_ERROR, null);
+            }
+        } catch (RestExchangeFailedException e) {
+            ret = new ResultWrapper<Result>(ResultWrapper.STATUS_HARD_ERROR, null);
+        }
+
+        return ret;
+    }
+    
+    
     public static class ResultWrapper<Result> {
         /**
          * You may use STATUS_OK to indicate that exchange completed successfully. {@see #getStatus}
