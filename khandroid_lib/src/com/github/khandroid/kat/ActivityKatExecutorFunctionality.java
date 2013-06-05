@@ -35,6 +35,7 @@ public class ActivityKatExecutorFunctionality<T, U, V> extends ActivityAttachedF
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         KhandroidLog.v("onCreate");
+        @SuppressWarnings("deprecation")
         Object task = getActivity().getLastNonConfigurationInstance();
         KhandroidLog.v("Task: " + task);
 

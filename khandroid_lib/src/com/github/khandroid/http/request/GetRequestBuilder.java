@@ -39,5 +39,4 @@ public class GetRequestBuilder extends RequestBuilder {
 
 		return ret;
 	}
-
 }

@@ -6,7 +6,6 @@ import java.util.concurrent.TimeoutException;
 
 import com.github.khandroid.misc.KhandroidLog;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.os.Build;
