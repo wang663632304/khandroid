@@ -50,4 +50,20 @@ public class StringUtils {
         return md5(Integer.toString(i));
     }
 
+
+    public static boolean isEmpty(String str) {
+        if (str == null) {
+            return true;
+        }
+        String trimmedString = str.trim();
+        if ("".equals(trimmedString)) {
+            return true;
+        }
+        return false;
+    }
+    
+    
+    public static boolean isNotEmpty(String str) {
+        return !isEmpty(str);
+    }
 }
