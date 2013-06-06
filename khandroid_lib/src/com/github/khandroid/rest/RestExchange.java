@@ -38,7 +38,7 @@ abstract public class RestExchange<T> {
     abstract protected RestRequest createRequest();
 
 
-    abstract protected T createResult(String source) throws MalformedResponseException;
+    abstract protected T createResult(String source, int responseCode) throws MalformedResponseException, UnexpectedResponseException;
 
 
     public RestRequest getRequest() {
@@ -59,10 +59,12 @@ abstract public class RestExchange<T> {
      * @throws ClientProtocolException
      * @throws IOException
      * @throws MalformedResponseException
+     * @throws UnexpectedResponseException
      */
     public String perform(HttpFunctionality mHttpFunc) throws ClientProtocolException,
                                               IOException,
-                                              MalformedResponseException {
+                                              MalformedResponseException,
+                                              UnexpectedResponseException {
         
         ResponseHandler<String> responseHandler = new KhandroidBasicResponseHandler();
         HttpUriRequest req = getRequest().createHttpRequest();
@@ -73,7 +75,7 @@ abstract public class RestExchange<T> {
         mResponse = rp.parse(rawResponse);
         if (mResponse.getStatus() == RestResponse.RESPONSE_STATUS_OK) {
             KhandroidLog.d("Response is OK");
-            mResult = createResult(mResponse.getPayload());
+            mResult = createResult(mResponse.getPayload(), mResponse.getResponseCode());
             mIsOk = true;
         } else {
             KhandroidLog.d("Response is ERROR: " + mResponse.getStatus());

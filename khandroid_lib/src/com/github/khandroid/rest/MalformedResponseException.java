@@ -18,7 +18,7 @@
 package com.github.khandroid.rest;
 
 @SuppressWarnings("serial")
-public class MalformedResponseException extends Exception {
+public class MalformedResponseException extends InvalidResponseException {
 	public MalformedResponseException() {
 		super();
 	}

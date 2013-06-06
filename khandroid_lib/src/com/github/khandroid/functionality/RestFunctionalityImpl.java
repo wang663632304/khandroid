@@ -23,6 +23,7 @@ import com.github.khandroid.rest.MalformedResponseException;
 import com.github.khandroid.rest.RestExchange;
 import com.github.khandroid.rest.RestExchange.CompletedListener;
 import com.github.khandroid.rest.RestExchangeFailedException;
+import com.github.khandroid.rest.UnexpectedResponseException;
 
 
 public class RestFunctionalityImpl implements RestFunctionality {
@@ -47,7 +48,9 @@ public class RestFunctionalityImpl implements RestFunctionality {
                 ret = x.perform(mHttpFunc);
             } catch (MalformedResponseException e) {
                 throw new RestExchangeFailedException("Parsing response failed because of malformed response from server.", e);
-            }
+            } catch (UnexpectedResponseException e) {
+                throw new RestExchangeFailedException("Unexpected response code.", e);
+            } 
         } catch (khandroid.ext.apache.http.client.ClientProtocolException e) {
             throw new RestExchangeFailedException("Executing request failed because of protocol violation.", e);
         } catch (UnknownHostException e) {
