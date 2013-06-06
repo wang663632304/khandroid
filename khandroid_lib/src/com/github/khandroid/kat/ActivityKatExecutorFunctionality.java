@@ -5,12 +5,12 @@ import android.os.Bundle;
 
 import com.github.khandroid.core.ActivityAttachedFunctionality;
 import com.github.khandroid.core.HostActivity;
-import com.github.khandroid.kat.KhandroidAsyncTask.TaskListener;
+import com.github.khandroid.kat.KhandroidAsyncTask.KatListener;
 import com.github.khandroid.misc.KhandroidLog;
 
 
 public class ActivityKatExecutorFunctionality<T, U, V> extends ActivityAttachedFunctionality
-        implements KatExecutor<T, U, V>, TaskListener<U, V> {
+        implements KatExecutor<T, U, V>, KatListener<U, V> {
 
     
     private KhandroidAsyncTask<T, U, V> mTask;

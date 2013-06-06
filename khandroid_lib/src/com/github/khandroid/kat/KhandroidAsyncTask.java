@@ -13,7 +13,7 @@ import android.os.Build;
 
 abstract public class KhandroidAsyncTask<Params, Progress, Result> {
     private InnerAsyncTask<Params, Progress, Result> mTask;
-    private TaskListener<Progress, Result> mListener;
+    private KatListener<Progress, Result> mListener;
     private boolean mIsSerialized = true;
 
 
@@ -22,7 +22,7 @@ abstract public class KhandroidAsyncTask<Params, Progress, Result> {
     }
 
 
-    public final AsyncTask<Params, Progress, Result> execute(TaskListener<Progress, Result> listener,
+    public final AsyncTask<Params, Progress, Result> execute(KatListener<Progress, Result> listener,
                                                              Params... params) {
         mListener = listener;
         return execute(params);
@@ -47,7 +47,7 @@ abstract public class KhandroidAsyncTask<Params, Progress, Result> {
     }
 
 
-    public void attach(TaskListener<Progress, Result> listener) {
+    public void attach(KatListener<Progress, Result> listener) {
         if (listener != null) {
             KhandroidLog.v("attach " + this);
             this.mListener = listener;
@@ -185,7 +185,7 @@ abstract public class KhandroidAsyncTask<Params, Progress, Result> {
         }
     }
 
-    public interface TaskListener<Progress, Result> {
+    public interface KatListener<Progress, Result> {
         void onTaskPublishProgress(Progress... progress);
 
 

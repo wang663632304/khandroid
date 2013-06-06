@@ -22,15 +22,15 @@ import android.support.v4.app.Fragment;
 
 import com.github.khandroid.core.FragmentAttachedFunctionality;
 import com.github.khandroid.core.HostFragment;
-import com.github.khandroid.kat.KhandroidAsyncTask.TaskListener;
+import com.github.khandroid.kat.KhandroidAsyncTask.KatListener;
 import com.github.khandroid.misc.KhandroidLog;
 
 
 public class FragmentKatExecutorFunctionality<T, U, V> extends FragmentAttachedFunctionality
-        implements KatExecutor<T, U, V>, TaskListener<U, V> {
+        implements KatExecutor<T, U, V>, KatListener<U, V> {
     private final TaskExecutorListener<U, V> mExecutorListener;
     private final String mTaskFragmentTag;
-    private TaskFragment mTaskFragment;
+    private KatFragment mTaskFragment;
 
 
     public FragmentKatExecutorFunctionality(HostFragment fragment, TaskExecutorListener<U, V> executorListener) {
@@ -52,7 +52,7 @@ public class FragmentKatExecutorFunctionality<T, U, V> extends FragmentAttachedF
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mTaskFragment = (TaskFragment) getFragment().getFragmentManager()
+        mTaskFragment = (KatFragment) getFragment().getFragmentManager()
                 .findFragmentByTag(mTaskFragmentTag);
 
         if (mTaskFragment != null) {
@@ -127,7 +127,7 @@ public class FragmentKatExecutorFunctionality<T, U, V> extends FragmentAttachedF
 
     @Override
     public void execute(KhandroidAsyncTask<T, U, V> task, T... params) {
-        mTaskFragment = new TaskFragment(task, params);
+        mTaskFragment = new KatFragment(task, params);
         mTaskFragment.setTargetFragment(getFragment(), 0);
         mTaskFragment.attach(this);
         getFragment().getFragmentManager().beginTransaction().add(mTaskFragment, mTaskFragmentTag)
@@ -136,12 +136,12 @@ public class FragmentKatExecutorFunctionality<T, U, V> extends FragmentAttachedF
 
 
 
-    private class TaskFragment extends Fragment implements TaskListener<U, V> {
+    private class KatFragment extends Fragment implements KatListener<U, V> {
         private KhandroidAsyncTask<T, U, V> mTask;
-        private TaskListener<U, V> mTaskListener;
+        private KatListener<U, V> mTaskListener;
 
 
-        public TaskFragment(KhandroidAsyncTask<T, U, V> task, T... params) {
+        public KatFragment(KhandroidAsyncTask<T, U, V> task, T... params) {
             super();
             setRetainInstance(true);
             mTask = task;
