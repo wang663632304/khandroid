@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -417,5 +418,29 @@ public class ActivityUtils {
         }
 
         return false;
+    }
+    
+    
+    public static final ListView findListView(View view, int resourceId) {
+        ListView ret = null;
+
+        ret = (ListView) view.findViewById(resourceId);
+        if (ret == null) {
+            KhandroidLog.w("Cannot find ListView with id = " + resourceId);
+        }
+
+        return ret;
+    }
+
+
+    public static final ListView findListViewX(View view, int resourceId) {
+        ListView ret = null;
+
+        ret = (ListView) view.findViewById(resourceId);
+        if (ret == null) {
+            throw new RuntimeException("Cannot find ListView with id = " + resourceId);
+        }
+
+        return ret;
     }
 }
