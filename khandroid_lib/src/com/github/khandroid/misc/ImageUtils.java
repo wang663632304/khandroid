@@ -17,7 +17,13 @@
 
 package com.github.khandroid.misc;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 public class ImageUtils {
 	public static Bitmap  BitmapResizeToMaxXorY(Bitmap srcBitmap, int maxSizeX, int maxSizeY) {
@@ -61,4 +67,21 @@ public class ImageUtils {
 		
 		return ret;
 	}
+	
+	
+    public static Bitmap getBitmapFromAsset(Context context, String strName) {
+        AssetManager assetManager = context.getAssets();
+
+        InputStream istr;
+        Bitmap bitmap = null;
+        try {
+            istr = assetManager.open(strName);
+            bitmap = BitmapFactory.decodeStream(istr);
+        } catch (IOException e) {
+            KhandroidLog.e(e.getMessage());
+            return null;
+        }
+
+        return bitmap;
+    }
 }

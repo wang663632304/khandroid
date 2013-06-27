@@ -17,7 +17,7 @@
 package com.github.khandroid.misc;
 
 public class LocationUtils {
-    public static final int EARTH_RADIUS = 6371;
+    public static final double EARTH_RADIUS = 6371*1000;
 
     public static double distanceHaversine(double lat1, double lon1, double lat2, double lon2) {
         double latDistance = Math.toRadians(lat2 - lat1);
