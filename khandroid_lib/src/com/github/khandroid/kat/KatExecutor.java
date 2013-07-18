@@ -40,5 +40,11 @@ public interface KatExecutor<T, U, V> {
         public void onContinueWithTask() {
             //empty
         }
+        
+        
+        @Override
+        public void onTaskPublishProgress(Progress... progress) {
+            // empty
+        }
     }
 }
