@@ -15,4 +15,30 @@ public interface KatExecutor<T, U, V> {
         void onTaskCompleted(Result result);
         void onContinueWithTask();
     }
+    
+    
+    /**
+     * Intended to be used then you are interested just in completion of the task.
+     * Such case is when you need to put in async task just some small operation like reading from small file or few DB rows.
+     * @author ogre
+     *
+     * @param <Progress>
+     * @param <Result>
+     */
+    abstract public static class TaskExecutorSimpleListener<Progress, Result> implements TaskExecutorListener<Progress, Result> {
+        @Override
+        public void onTaskCancelled() {
+            //empty
+        }
+
+        @Override
+        public void onTaskCompleted(Result result) {
+            //empty
+        }
+
+        @Override
+        public void onContinueWithTask() {
+            //empty
+        }
+    }
 }
