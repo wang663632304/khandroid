@@ -32,11 +32,6 @@ public interface KatExecutor<T, U, V> {
         }
 
         @Override
-        public void onTaskCompleted(Result result) {
-            //empty
-        }
-
-        @Override
         public void onContinueWithTask() {
             //empty
         }
