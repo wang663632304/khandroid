@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -443,4 +444,30 @@ public class ActivityUtils {
 
         return ret;
     }
+    
+    
+    public static final ImageView findImageView(View view, int resourceId) {
+        ImageView ret = null;
+
+        ret = (ImageView) view.findViewById(resourceId);
+        if (ret == null) {
+            KhandroidLog.w("Cannot find ImageView with id = " + resourceId);
+        }
+
+        return ret;
+    }
+
+
+    public static final ImageView findImageViewX(View view, int resourceId) {
+        ImageView ret = null;
+
+        ret = (ImageView) view.findViewById(resourceId);
+        if (ret == null) {
+            throw new RuntimeException("Cannot find ImageView with id = " + resourceId);
+        }
+
+        return ret;
+    }
+
+    
 }
