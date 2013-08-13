@@ -61,9 +61,7 @@ public class FileDownloader {
 	}
 	
 	
-	public static boolean download(HttpClient httpClient, URI source, File destination) throws ClientProtocolException, IOException {
-		boolean ret = false;
-		
+	public static void download(HttpClient httpClient, URI source, File destination) throws ClientProtocolException, IOException {
 		byte[] content = download(httpClient, source);
 		ByteArrayInputStream input = new ByteArrayInputStream(content);
 		BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(destination));
@@ -71,7 +69,5 @@ public class FileDownloader {
 		IOUtils.copy(input, output);
 		input.close();
 		output.close();
-		
-		return ret;
 	}
 }
