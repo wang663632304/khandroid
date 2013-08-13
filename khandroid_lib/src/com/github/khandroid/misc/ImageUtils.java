@@ -26,12 +26,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 public class ImageUtils {
-	public static Bitmap  BitmapResizeToMaxXorY(Bitmap srcBitmap, int maxSizeX, int maxSizeY) {
+	public static Bitmap  bitmapResizeToMaxXorY(Bitmap srcBitmap, int maxSizeX, int maxSizeY) {
 		Bitmap ret = null;
 		
 		if (srcBitmap != null && maxSizeX > 0 && maxSizeY > 0) {
-			Float origSizeX  = new Float(srcBitmap.getWidth());
-			Float origSizeY = new Float(srcBitmap.getHeight());
+			Float origSizeX  = Float.valueOf(srcBitmap.getWidth());
+			Float origSizeY = Float.valueOf(srcBitmap.getHeight());
 			
 			if (origSizeX > maxSizeX || origSizeY > maxSizeY) {
 				float origRatio =  origSizeX / origSizeY;
@@ -83,5 +83,11 @@ public class ImageUtils {
         }
 
         return bitmap;
+    }
+    
+    
+    @Deprecated
+    public static Bitmap  BitmapResizeToMaxXorY(Bitmap srcBitmap, int maxSizeX, int maxSizeY) {
+        return bitmapResizeToMaxXorY(srcBitmap, maxSizeX, maxSizeY); 
     }
 }
