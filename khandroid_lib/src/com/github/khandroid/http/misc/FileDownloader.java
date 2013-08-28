@@ -27,6 +27,8 @@ import java.net.URI;
 
 import org.apache.commons.io.IOUtils;
 
+import com.github.khandroid.misc.KhandroidLog;
+
 
 import khandroid.ext.apache.http.HttpEntity;
 import khandroid.ext.apache.http.HttpResponse;
@@ -40,10 +42,12 @@ public class FileDownloader {
 	public static byte[] download(HttpClient httpClient, URI source) throws ClientProtocolException, IOException {
 		byte[] ret;
 		
+		KhandroidLog.v("Downloading " + source.toString());
 		HttpGet req = new HttpGet(source);
 		HttpResponse response = httpClient.execute(req);
 		StatusLine statusLine = response.getStatusLine();
         int statusCode = statusLine.getStatusCode();
+        KhandroidLog.v("Status code:" + statusCode);
         if (statusCode == 200) {
         	HttpEntity entity = response.getEntity();
         	
@@ -56,6 +60,7 @@ public class FileDownloader {
         } else {
             throw new IOException("Download failed, HTTP response code " + statusCode + " - " + statusLine.getReasonPhrase());        	
         }
+        req.releaseConnection();
 		
 		return ret;
 	}
